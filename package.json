@@ -10,7 +10,6 @@
     "packages/app-builder-lib/src/options/**/*": "pnpm generate-schema"
   },
   "scripts": {
-    "postinstall": "patch-package",
     "//": "do not wrap into single quotes - windows doesn't unwrap arg in this case",
     "compile": "tsc --build",
     "lint": "eslint packages --ext .ts",
@@ -35,7 +34,6 @@
     "ci:publish": "pnpm compile && pnpm publish -r && changeset tag",
     "jsdoc": "ts2jsdoc packages/builder-util-runtime packages/builder-util packages/app-builder-lib packages/electron-builder packages/electron-publish packages/electron-updater packages/dmg-builder",
     "jsdoc2md2html": "node scripts/jsdoc2md2html.js",
-    "prepare": "husky install",
     "update-deps": "pnpm update -i -r --latest"
   },
   "//": "repository must be specified otherwise conventional-changelog will use forked repo (currently cloned)",
