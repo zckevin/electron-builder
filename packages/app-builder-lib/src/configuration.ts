@@ -268,7 +268,7 @@ export interface Configuration extends PlatformSpecificBuildOptions {
   readonly removePackageKeywords?: boolean
 
   /**
-   * ....
+   * Whether to generate asar update zip
    * 
    * @default true
    */
