@@ -266,6 +266,13 @@ export interface Configuration extends PlatformSpecificBuildOptions {
    * @default true
    */
   readonly removePackageKeywords?: boolean
+
+  /**
+   * ....
+   * 
+   * @default true
+   */
+   readonly differentialAsarZip?: boolean
 }
 
 interface PackContext {
