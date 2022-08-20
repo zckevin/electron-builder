@@ -1,6 +1,6 @@
 {
-  "name": "electron-updater",
-  "version": "5.2.2",
+  "name": "@zckevin/electron-asar-differential-updater",
+  "version": "0.0.3",
   "description": "Electron asar differential updater for electron applications",
   "main": "out/main.js",
   "author": "Cong Zuo",
@@ -16,7 +16,7 @@
     "@types/adm-zip": "^0.5.0",
     "@types/semver": "^7.3.6",
     "adm-zip": "^0.5.9",
-    "builder-util-runtime": "workspace:*",
+    "builder-util-runtime": "9.1.0",
     "fs-extra": "^10.0.0",
     "js-yaml": "^4.1.0",
     "lazy-val": "^1.0.5",
