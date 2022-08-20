@@ -10,6 +10,7 @@ export { Provider } from "./providers/Provider"
 export { AppImageUpdater } from "./AppImageUpdater"
 export { MacUpdater } from "./MacUpdater"
 export { NsisUpdater } from "./NsisUpdater"
+export { AsarUpdater } from "./AsarUpdater"
 
 // autoUpdater to mimic electron bundled autoUpdater
 let _autoUpdater: any
@@ -18,14 +19,7 @@ let _autoUpdater: any
 export declare const autoUpdater: AppUpdater
 
 function doLoadAutoUpdater(): AppUpdater {
-  // tslint:disable:prefer-conditional-expression
-  if (process.platform === "win32") {
-    _autoUpdater = new (require("./NsisUpdater").NsisUpdater)()
-  } else if (process.platform === "darwin") {
-    _autoUpdater = new (require("./MacUpdater").MacUpdater)()
-  } else {
-    _autoUpdater = new (require("./AppImageUpdater").AppImageUpdater)()
-  }
+  _autoUpdater = new (require("./AsarUpdater").AsarUpdater)()
   return _autoUpdater
 }
 

@@ -86,7 +86,7 @@ export class DownloadedUpdateHelper {
     await this.cleanCacheDirForPendingUpdate()
   }
 
-  private async cleanCacheDirForPendingUpdate(): Promise<void> {
+  public async cleanCacheDirForPendingUpdate(): Promise<void> {
     try {
       // remove stale data
       await emptyDir(this.cacheDirForPendingUpdate)

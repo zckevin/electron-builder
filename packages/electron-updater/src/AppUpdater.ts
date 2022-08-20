@@ -187,8 +187,7 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
 
   protected updateInfoAndProvider: UpdateInfoAndProvider | null = null
 
-  /** @internal */
-  readonly httpExecutor: ElectronHttpExecutor
+  public httpExecutor: ElectronHttpExecutor
 
   protected constructor(options: AllPublishOptions | null | undefined, app?: AppAdapter) {
     super()
@@ -571,11 +570,7 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
     return true
   }
 
-  /**
-   * @private
-   * @internal
-   */
-  _testOnlyOptions: TestOnlyUpdaterOptions | null = null
+  public _testOnlyOptions: TestOnlyUpdaterOptions | null = null
 
   private async getOrCreateDownloadHelper(): Promise<DownloadedUpdateHelper> {
     let result = this.downloadedUpdateHelper
@@ -638,6 +633,11 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
         downloadedFile: updateFile,
       })
       return packageFile == null ? [updateFile] : [updateFile, packageFile]
+    }
+
+    if (this._testOnlyOptions?.removePendingZip) {
+      this._logger.info(`AsarUpdater testing mode: remove pending zip`)
+      await downloadedUpdateHelper.cleanCacheDirForPendingUpdate()
     }
 
     const log = this._logger
@@ -729,4 +729,5 @@ export interface TestOnlyUpdaterOptions {
   platform: ProviderPlatform
 
   isUseDifferentialDownload?: boolean
+  removePendingZip?: boolean
 }

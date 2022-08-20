@@ -1,22 +1,21 @@
 {
   "name": "electron-updater",
   "version": "5.2.2",
-  "description": "Cross platform updater for electron applications",
+  "description": "Electron asar differential updater for electron applications",
   "main": "out/main.js",
-  "author": "Vladimir Krivosheev",
+  "author": "Cong Zuo",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-userland/electron-builder.git",
     "directory": "packages/electron-updater"
   },
-  "bugs": "https://github.com/electron-userland/electron-builder/issues",
-  "homepage": "https://github.com/electron-userland/electron-builder",
   "files": [
     "out"
   ],
   "dependencies": {
+    "@types/adm-zip": "^0.5.0",
     "@types/semver": "^7.3.6",
+    "adm-zip": "^0.5.9",
     "builder-util-runtime": "workspace:*",
     "fs-extra": "^10.0.0",
     "js-yaml": "^4.1.0",
