@@ -2,6 +2,7 @@ const shell = require('shelljs');
 const fs = require('fs');
 const path = require('path');
 const fsExtra = require('fs-extra')
+const os = require('os')
 
 const demoDirName = "electron-update-example"
 
@@ -63,17 +64,28 @@ class FileCopier {
 }
 
 function buildElectronProject(version, rootDir) {
-  const goBuilders = [
-    new GoBuilder("darwin", "amd64"),
-    new GoBuilder("darwin", "arm64"),
-    new GoBuilder("linux", "amd64"),
-    new GoBuilder("windows", "amd64"),
-  ]
+  let arch = os.arch();
+  let operatingSystem = os.platform();
+  // name mapping from Node -> Go
+  switch(arch) {
+    case "x64":
+      arch = "amd64";
+      break;
+    case "ia32":
+      arch = "386";
+      break;
+  }
+  switch(operatingSystem) {
+    case "win32":
+      operatingSystem = "windows";
+      break;
+  }
+  const goBuilder = new GoBuilder(operatingSystem, arch)
   const jsBuilder = new JSBuilder()
   const packageJsonBuilder = new PackageJsonBuilder()
   const fileCopier = new FileCopier()
 
-  goBuilders.map(builder => builder.build(version, rootDir))
+  goBuilder.build(version, rootDir)
   jsBuilder.build(version, rootDir)
   packageJsonBuilder.build(version, rootDir)
   fileCopier.build(rootDir)

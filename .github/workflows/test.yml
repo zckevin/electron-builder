@@ -44,6 +44,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Install electron-update-example dependencies
+        working-directory: ./test/electron-update-example
+        run: npm install
+
       - name: tsc build
         run: npm run build
 
