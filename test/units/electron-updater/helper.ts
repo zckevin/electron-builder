@@ -1,4 +1,4 @@
-import { OLD_FILE, NEW_FILE, FIXTURES_DIR, YML_DUMMY_URL } from "./globals"
+import { OLD_FILE, NEW_FILE, FIXTURES_DIR, YML_DUMMY_URL } from "./config"
 import { AsarUpdater } from "electron-updater";
 import { GenericProvider } from "electron-updater/out/providers/GenericProvider";
 import { parseUpdateInfo } from "electron-updater/out/providers/Provider";

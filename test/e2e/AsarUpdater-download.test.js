@@ -1,7 +1,7 @@
 const { _electron: electron } = require('playwright');
 const path = require('path');
 const { createStaticServer } = require("./http-server.js");
-const { FIXTURES_DIR, NEW_FILE } = require("../dist/electron-updater/globals.js");
+const { FIXTURES_DIR, NEW_FILE } = require("../out/units/electron-updater/config.js");
 const { ipcMainInvokeHandler } = require("electron-playwright-helpers")
 
 const defaultTimeout = 15 * 1000; // 15 seconds

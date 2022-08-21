@@ -1,8 +1,7 @@
+import { TEST_ROOT_DIR } from "../../global"
 const path = require("path");
-const appRoot = require("app-root-path");
 
-// root is @zckevin/electron-builder
-export const FIXTURES_DIR = path.join(appRoot.toString(), "test/fixtures");
+export const FIXTURES_DIR = path.join(TEST_ROOT_DIR, "fixtures");
 
 export const YML_DUMMY_URL = new URL("https://example.com/update.yml");
 export const PUBLISH_OPTIONS = {

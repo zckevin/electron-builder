@@ -5,5 +5,8 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest"
   },
-  testPathIgnorePatterns: ["/dist/"]
+  testPathIgnorePatterns: [
+    "/dist/",
+    "/out/",
+  ]
 };

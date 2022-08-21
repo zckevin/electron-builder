@@ -1,5 +1,5 @@
-const { tuneUpdaterForTest, doDownloadUpdate, checkForUpdates, } = require("../dist/electron-updater/helper.js");
-const { OLD_FILE } = require("../dist/electron-updater/globals.js");
+const { tuneUpdaterForTest, doDownloadUpdate } = require("../out/units/electron-updater/helper.js");
+const { OLD_FILE } = require("../out/units/electron-updater/config.js");
 const { serverPort } = require("./http-server.js");
 const { AsarUpdater } = require("electron-updater");
 const log = require('electron-log');

@@ -1,17 +1,41 @@
 import * as builder from 'electron-builder'
-import basicConfig from "./buildConfig"
+import { basicConfig } from "./config"
+import { platform } from './helper';
+import { TEST_ROOT_DIR } from "../../global"
+const fsExtra = require('fs-extra');
+const path = require('path')
 
-const Platform = builder.Platform
+// it may take some time to install/download Electron
+const timeout = 15 * 1000;
 
-test("zcsb", async () => {
-  await builder.build({
-    targets: Platform.LINUX.createTarget(),
+beforeEach(async () => {
+  const distDir = path.join(TEST_ROOT_DIR, "dist");
+  console.log(`Clean dist dir: ${distDir}`);
+  fsExtra.emptyDirSync(path.join(TEST_ROOT_DIR, "dist"));
+})
+
+test("Builder should succceed on build unpacked project", async () => {
+  const args = {
+    targets: platform.createTarget(),
     config: basicConfig
-  } as any).then((result: any) => {
-    console.log(JSON.stringify(result))
-  }).catch((error: any) => {
-    console.error(error)
-  })
+  };
+  await builder.build(args as any)
+    .catch((error: any) => {
+      throw error;
+    })
+}, timeout)
 
-  expect(1 + 1).toEqual(2);
-}, 1000 * 10)
+test("Builder should succceed on build unpacked project with differentialAsarZip", async () => {
+  const config = {
+    differentialAsarZip: true,
+    ...basicConfig,
+  }
+  const args = {
+    targets: platform.createTarget(),
+    config,
+  };
+  await builder.build(args as any)
+    .catch((error: any) => {
+      throw error;
+    })
+}, timeout)

@@ -1,4 +1,4 @@
-import { OLD_FILE, PUBLISH_OPTIONS } from "./globals"
+import { OLD_FILE, PUBLISH_OPTIONS } from "./config"
 import { tuneUpdaterForTest, doDownloadUpdate } from "./helper"
 import { createHTTPExecutorMock } from "./httpExecutor"
 import { AsarUpdater } from "electron-updater";
@@ -22,7 +22,7 @@ test("Should fallback to full download if `oldFile`(cached zip) does not exists"
 
   try {
     await doDownloadUpdate(updater);
-  } catch (e) {
+  } catch (e: any) {
     expect(e.message).toMatch(/current\.asar\.zip.*does not exist/);
     return
   }
@@ -73,7 +73,7 @@ test("Differencial download should fallback to full download if current oldfile 
 
   try {
     await doDownloadUpdate(updater);
-  } catch (e) {
+  } catch (e: any) {
     expect(e.message).toMatch(/checksum mismatch/);
     return
   }
