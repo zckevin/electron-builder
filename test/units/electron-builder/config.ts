@@ -1,3 +1,4 @@
+import { TEST_ROOT_DIR } from "../../global";
 const path = require('path');
 
 const platformConfig = {
@@ -7,17 +8,25 @@ const platformConfig = {
 
 export const basicConfig = {
   appId: "com.github.iffy.electronupdaterexample",
-
   directories: {
     output: "dist",
-    app: path.join(__dirname, "../../electron-update-example"),
+    app: path.join(TEST_ROOT_DIR, "electron-update-example"),
   },
-  extraResources: [
-    "./binary/**"
-  ],
-  files: [],
-
   linux: platformConfig,
   win: platformConfig,
   mac: platformConfig,
+}
+
+export function getConfig(rootDir: string) {
+  return {
+    appId: "com.github.iffy.electronupdaterexample",
+    directories: {
+      output: "dist",
+      // app: path.join(TEST_ROOT_DIR, "electron-update-example"),
+      app: rootDir,
+    },
+    linux: platformConfig,
+    win: platformConfig,
+    mac: platformConfig,
+  }
 }

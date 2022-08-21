@@ -1,4 +1,4 @@
-const { differencialDownload, fallbackToFullDownload } = require("./updater.js");
+const { differencialDownload, fallbackToFullDownload } = require("./downloader.js");
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require("path");
 

@@ -1,0 +1,1 @@
+const electronUpdater = require("electron-updater");
