@@ -15,6 +15,9 @@
     },
     {
       "path": "./scripts/renderer"
+    },
+    {
+      "path": "./test"
     }
   ]
 }

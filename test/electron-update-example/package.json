@@ -1,0 +1,11 @@
+{
+  "name": "electron-updater-example",
+  "version": "0.9.26",
+  "main": "main.js",
+  "description": "electron-updater example project",
+  "author": "Matt Haggard",
+  "devDependencies": {
+    "electron": "20.0.2",
+    "electron-log": "^4.4.1"
+  }
+}

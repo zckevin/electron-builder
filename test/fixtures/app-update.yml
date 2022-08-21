@@ -1,0 +1,4 @@
+owner: iffy
+repo: electron-updater-example
+provider: github
+updaterCacheDirName: electron-updater-example-updater
