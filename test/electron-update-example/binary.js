@@ -1,7 +1,10 @@
 const { spawn } = require('child_process');
 const path = require('path');
-const log = require('electron-log');
 const os = require('os');
+const log = require('electron-log');
+const fetch = require('node-fetch');
+
+const goHttpServerApi = 'http://localhost:10086/version'
 
 function getBinName() {
   let arch = os.arch();
@@ -40,6 +43,16 @@ goHttpServer.on('close', (code) => {
   log.info(`goHttpServer: child process exited with code ${code}`);
 });
 
+async function goHttpServerGetVersion() {
+  try {
+    const response = await fetch(goHttpServerApi);
+    return await response.text();
+  } catch (err) {
+    return err;
+  }
+}
+
 module.exports = {
   goHttpServer,
+  goHttpServerGetVersion,
 }

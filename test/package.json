@@ -3,7 +3,7 @@
   "scripts": {
     "build": "tsc --build",
     "test:unit": "jest --runInBand ./units",
-    "test:e2e": "jest --runInBand ./e2e",
+    "test:e2e": "playwright test",
     "test:e2e:gnu": "DEBUG=pw:browser npm run test:e2e",
     "test:e2e:windows": "set DEBUG=pw:browser && npm run test:e2e",
     "test": "npm run test:unit && npm run test:e2e",

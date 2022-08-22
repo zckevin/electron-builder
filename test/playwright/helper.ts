@@ -37,8 +37,8 @@ export async function generateTestingProjects(versions: string[]) {
   }
 }
 
-export async function spawnExecutable() {
-  const appRootDir = "electron-update-example-0.0.1.linux-unpacked"
+export async function spawnExecutable(version: string) {
+  const appRootDir = `electron-update-example-${version}.linux-unpacked`
   const appInfo = parseElectronApp(path.join(DIST_DIR, appRootDir))
 
   const electronApp = await electron.launch({

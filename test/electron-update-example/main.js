@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-
-const { goHttpServer } = require("./binary.js")
+const { goHttpServer, goHttpServerGetVersion } = require("./binary.js")
 const { checkForUpdates } = require("./updater.js")
 
 app.commandLine.appendSwitch("disable-gpu");
@@ -34,14 +33,20 @@ function deferExit() {
 app.on('ready', async function () {
   createDefaultWindow();
   onReadyPromiseResolve();
+  deferExit();
 });
 
 app.on('window-all-closed', () => {
   app.quit();
 });
 
-app.on('quit', () => {
+app.on('will-quit', () => {
   goHttpServer.kill("SIGKILL");
+});
+
+ipcMain.handle("quit", async () => {
+  app.quit();
+  return true;
 });
 
 ipcMain.handle("hello-world", async () => {
@@ -51,10 +56,26 @@ ipcMain.handle("hello-world", async () => {
 
 ipcMain.handle("checkForUpdates", async (event, updaterTestOptions) => {
   await onReadyPromise;
-  deferExit();
-
   try {
     return await checkForUpdates(updaterTestOptions);
+  } catch (err) {
+    return err;
+  }
+});
+
+ipcMain.handle("getVersionGolang", async (event) => {
+  await onReadyPromise;
+  try {
+    return await goHttpServerGetVersion();
+  } catch (err) {
+    return err;
+  }
+});
+
+ipcMain.handle("getVersionJavascript", async (event) => {
+  await onReadyPromise;
+  try {
+    return require("./version.js").version;
   } catch (err) {
     return err;
   }

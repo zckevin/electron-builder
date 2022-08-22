@@ -5,7 +5,8 @@
   "description": "electron-updater example project",
   "author": "Matt Haggard",
   "dependencies": {
-    "electron-log": "^4.4.1"
+    "electron-log": "^4.4.1",
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "electron": "20.0.2"
