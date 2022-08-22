@@ -1,5 +1,5 @@
 {
-  "name": "electron-updater-example",
+  "name": "electron-update-example",
   "version": "0.9.26",
   "main": "main.js",
   "description": "electron-updater example project",

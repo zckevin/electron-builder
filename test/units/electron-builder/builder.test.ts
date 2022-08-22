@@ -1,8 +1,8 @@
 import * as builder from 'electron-builder'
-import { getConfig } from "./config"
+import { BuildConfig } from "./config"
 import { platform } from './helper';
 import { DIST_DIR } from "../../global"
-const { buildElectronProject } = require("../../builder.js");
+const { generateElectronProject } = require("../../builder.js");
 const fsExtra = require('fs-extra');
 const path = require('path')
 
@@ -17,11 +17,11 @@ beforeEach(() => {
 })
 
 test("Builder should succceed on build unpacked project", async () => {
-  buildElectronProject(version, rootDir)
+  generateElectronProject(version, rootDir)
 
   const args = {
     targets: platform.createTarget(),
-    config: getConfig(rootDir),
+    config: new BuildConfig(rootDir).config,
   };
   await builder.build(args as any)
     .catch((error: any) => {
@@ -30,15 +30,14 @@ test("Builder should succceed on build unpacked project", async () => {
 }, timeout)
 
 test("Builder should succceed on build unpacked project with differentialAsarZip", async () => {
-  buildElectronProject(version, rootDir)
+  generateElectronProject(version, rootDir)
 
-  const config = {
-    differentialAsarZip: true,
-    ...getConfig(rootDir),
-  }
   const args = {
     targets: platform.createTarget(),
-    config,
+    config: new BuildConfig(rootDir)
+      .withDifferentialAsar(true)
+      .withLinkElectronUpdaterToOutDir(true)
+      .config,
   };
   await builder.build(args as any)
     .catch((error: any) => {

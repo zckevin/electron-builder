@@ -1,5 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-require("./updater.js")
+
+const { goHttpServer } = require("./binary.js")
+const { checkForUpdates } = require("./updater.js")
 
 app.commandLine.appendSwitch("disable-gpu");
 
@@ -8,7 +10,6 @@ let onReadyPromiseResolve;
 let onReadyPromise = new Promise(resolve => {
   onReadyPromiseResolve = resolve;
 });
-let updateResultPromise;
 
 function createDefaultWindow() {
   win = new BrowserWindow({
@@ -27,7 +28,7 @@ function createDefaultWindow() {
 
 // make sure jest is done before exiting
 function deferExit() {
-  setTimeout(() => app.quit(), 2000);
+  setTimeout(() => app.quit(), 5000);
 }
 
 app.on('ready', async function () {
@@ -39,17 +40,22 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-ipcMain.handle("differencial-download", async () => {
-  await onReadyPromise;
-  updateResultPromise = differencialDownload();
+app.on('quit', () => {
+  goHttpServer.kill("SIGKILL");
 });
 
-ipcMain.handle("get-update-result", async () => {
+ipcMain.handle("hello-world", async () => {
   deferExit();
+  return 1;
+})
+
+ipcMain.handle("checkForUpdates", async (event, updaterTestOptions) => {
+  await onReadyPromise;
+  deferExit();
+
   try {
-    const result = await updateResultPromise;
-    return result;
+    return await checkForUpdates(updaterTestOptions);
   } catch (err) {
     return err;
   }
-})
+});

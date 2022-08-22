@@ -7,14 +7,33 @@ const os = require('os')
 const demoDirName = "electron-update-example"
 
 class GoBuilder {
-  constructor(os, arch) {
-    this.os = os;
+  constructor() {
+    let arch = os.arch();
+    let operatingSystem = os.platform();
+    // name mapping from Node -> Go
+    switch (arch) {
+      case "x64":
+        arch = "amd64";
+        break;
+      case "ia32":
+        arch = "386";
+        break;
+    }
+    switch (operatingSystem) {
+      case "win32":
+        operatingSystem = "windows";
+        break;
+    }
+    this.os = operatingSystem;
     this.arch = arch;
+    this.binName = `http-server-${operatingSystem}-${arch}`
+
     this.goFilePath = path.join(__dirname, demoDirName, "http-server.go")
   }
 
+
   build(version, rootDir) {
-    const destPath = path.join(rootDir, `http-server-${this.os}-${this.arch}`)
+    const destPath = path.join(rootDir, this.binName)
     const cmd = `env GOOS=${this.os} GOARCH=${this.arch} ` +
       `go build -ldflags "-s -w -X main.version=${version}" ` +
       `-o ${destPath} ${this.goFilePath}`
@@ -49,6 +68,7 @@ class FileCopier {
       "main.js",
       "binary.js",
       "updater.js",
+      "version.html",
       "node_modules/",
     ]
   }
@@ -57,30 +77,14 @@ class FileCopier {
     for (const srcFile of this.srcFiles) {
       const srcPath = path.join(__dirname, demoDirName, srcFile)
       const destPath = path.join(rootDir, srcFile)
-      console.log(`FileCopier: copy ${srcFile} to ${destPath}`)
+      console.log(`FileCopier: copy ${srcPath} to ${destPath}`)
       fsExtra.copySync(srcPath, destPath)
     }
   }
 }
 
-function buildElectronProject(version, rootDir) {
-  let arch = os.arch();
-  let operatingSystem = os.platform();
-  // name mapping from Node -> Go
-  switch(arch) {
-    case "x64":
-      arch = "amd64";
-      break;
-    case "ia32":
-      arch = "386";
-      break;
-  }
-  switch(operatingSystem) {
-    case "win32":
-      operatingSystem = "windows";
-      break;
-  }
-  const goBuilder = new GoBuilder(operatingSystem, arch)
+function generateElectronProject(version, rootDir) {
+  const goBuilder = new GoBuilder()
   const jsBuilder = new JSBuilder()
   const packageJsonBuilder = new PackageJsonBuilder()
   const fileCopier = new FileCopier()
@@ -97,6 +101,6 @@ function clean(dir) {
 }
 
 module.exports = {
-  buildElectronProject,
+  generateElectronProject,
   clean,
 }

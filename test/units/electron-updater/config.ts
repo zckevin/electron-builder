@@ -13,7 +13,7 @@ class testFile {
   constructor(public version: string) { }
 
   public zipPath(): string {
-    return path.join(FIXTURES_DIR, `electron-updater-example-${this.version}.asar.zip`);
+    return path.join(FIXTURES_DIR, `electron-update-example-${this.version}.asar.zip`);
   }
 
   public blockmapPath(): string {

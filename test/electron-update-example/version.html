@@ -9,7 +9,6 @@
 <script>
 // Display the current version
 let version = window.location.hash.substring(1);
-window.appVersion = version;
 document.getElementById('version').innerText = version;
 
 // Listen for messages
@@ -20,7 +19,6 @@ ipcRenderer.on('message', function(event, text) {
   message.innerHTML = text;
   container.appendChild(message);
 })
-
 </script>
 </body>
 </html>

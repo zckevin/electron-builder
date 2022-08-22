@@ -1,5 +1,5 @@
 const { program } = require('commander');
-const { buildElectronProject, clean } = require("./builder.js")
+const { generateElectronProject, clean } = require("./builder.js")
 
 program
   .command("clean")
@@ -14,7 +14,7 @@ program
   .arguments("<version> <rootDir>")
   .action((version, rootDir) => {
     console.log(`build ${version} to ${rootDir}...`)
-    buildElectronProject(version, rootDir)
+    generateElectronProject(version, rootDir)
   })
 
 program.parse();

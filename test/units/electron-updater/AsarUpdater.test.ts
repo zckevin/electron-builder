@@ -48,9 +48,7 @@ test("Differencial download should succeed with existing/specified `oldfile`", a
   tuneUpdaterForTest(updater);
 
   // set oldfile path
-  updater.asarTestingOptions!.getCachedZipFile = jest.fn((): string => {
-    return OLD_FILE.zipPath();
-  })
+  updater.asarTestingOptions!.cachedZipFilePath = OLD_FILE.zipPath();
   updater.httpExecutor = createHTTPExecutorMock();
 
   try {
@@ -66,9 +64,7 @@ test("Differencial download should fallback to full download if current oldfile 
   tuneUpdaterForTest(updater);
 
   // set oldFile path to corrupted file
-  updater.asarTestingOptions!.getCachedZipFile = jest.fn((): string => {
-    return OLD_FILE.zipPath() + ".corrupted";
-  })
+  updater.asarTestingOptions!.cachedZipFilePath = OLD_FILE.zipPath() + ".corrupted";
   updater.httpExecutor = createHTTPExecutorMock();
 
   try {
