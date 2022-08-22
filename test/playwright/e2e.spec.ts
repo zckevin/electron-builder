@@ -11,13 +11,14 @@ const { createStaticServer } = require("../e2e/http-server.js");
 
 let server: http.Server;
 let electronApp: ElectronApplication
+const { isCi } = require("env-ci")();
 
 test.beforeAll(async () => {
   server = await createStaticServer(DIST_DIR);
 })
 
 test.afterAll(async () => {
-  server.close();
+  server?.close();
 })
 
 test.beforeEach(async () => {
@@ -26,12 +27,24 @@ test.beforeEach(async () => {
 })
 
 test.afterEach(async () => {
-  await electronApp.close()
+  await electronApp?.close()
 })
 
 async function testUpdate(differencialUpdate: boolean) {
   const versions = ["0.0.1", "0.0.2"]
-  await generateTestingProjects(versions)
+
+  if (isCi) {
+    // cause it took too long to generate testing projects in playwright test,
+    // dist2 would be generated in CI script and could be reused by tests
+    const preGeneratedDestDir = path.join(DIST_DIR, `../dist2`)
+    if (!fsExtra.existsSync(preGeneratedDestDir)) {
+      throw new Error(`preGeneratedDestDirForCi: dir not found: ${preGeneratedDestDir}`)
+    }
+    fsExtra.copySync(preGeneratedDestDir, DIST_DIR)
+    console.log(`preGeneratedDestDirForCi: use copy from ${preGeneratedDestDir} to ${DIST_DIR}`)
+  } else {
+    await generateTestingProjects(versions)
+  }
 
   {
     electronApp = await spawnExecutable(versions[0])
@@ -58,6 +71,11 @@ async function testUpdate(differencialUpdate: boolean) {
     console.log("=================================================================")
   }
 
+  await electronApp?.close()
+  // TODO: maybe we should add an event to signal the update is complete?
+  // sleep for 1 second to make sure the app is updated
+  await new Promise(resolve => setTimeout(resolve, 1000))
+
   {
     electronApp = await spawnExecutable(versions[0])
     const asarTestingOptions = {
@@ -77,15 +95,9 @@ async function testUpdate(differencialUpdate: boolean) {
 }
 
 test('Electron-update-example should be upgraded by falling back to full download update', async () => {
-  // set timeout to 3 minutes
-  test.setTimeout(3 * 60 * 1000)
-
   await testUpdate(false)
 })
 
 test('Electron-update-example should be upgraded using differencial update', async () => {
-  // set timeout to 3 minutes
-  test.setTimeout(3 * 60 * 1000)
-
   await testUpdate(true)
 })

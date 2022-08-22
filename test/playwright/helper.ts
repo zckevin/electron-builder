@@ -47,6 +47,7 @@ export async function spawnExecutable(version: string) {
   
   const electronApp = await electron.launch({
     args: [appInfo.main],
+    timeout: 10 * 60 * 1000,
     executablePath,
   })
   electronApp.on('window', async (page) => {

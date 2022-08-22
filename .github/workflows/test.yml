@@ -57,6 +57,10 @@ jobs:
         working-directory: ./test
         run: npm run test:unit
 
+      - name: pre-generate electron projects
+        working-directory: ./test
+        run: npm run ci-generate-electron-projects
+
       - name: e2e xvfb tests(Windows)
         if: runner.os == 'Windows'
         uses: GabrielBB/xvfb-action@v1
