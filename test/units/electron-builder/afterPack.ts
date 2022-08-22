@@ -13,9 +13,7 @@ async function linkModuleToOutDir(context: AfterPackContext) {
   if (!fsExtra.existsSync(moduleDir)) {
     throw new Error(`linkModulesToOutDir: Source module doesn't exist: ${moduleDir}`);
   }
-  if (!fsExtra.existsSync(destDir)) {
-    throw new Error(`linkModulesToOutDir: Cannot find node_modules dir: ${destDir}`);
-  }
+  fsExtra.ensureDirSync(destDir);
   const { warn } = await symlinkDir(moduleDir, path.join(destDir, moduleName))
   if (warn) {
     throw new Error(`linkModulesToOutDir error: ${warn}`);

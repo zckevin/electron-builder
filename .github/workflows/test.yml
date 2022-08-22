@@ -5,12 +5,14 @@ on:
     branches: [ electron-asar-differential-updater ]
 
 jobs:
-  linux-test:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [16.x]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -59,4 +61,9 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           working-directory: ./test
-          run: npm run test:e2e:gnu
+          run: |
+               if [ '$RUNNER_OS' == 'Windows' ]; then
+                    npm run test:e2e:windows
+               else
+                    npm run test:e2e:gnu
+               fi
