@@ -1,7 +1,7 @@
-import { OLD_FILE, PUBLISH_OPTIONS } from "./config"
+import { AsarUpdater } from "electron-updater";
+import { OLD_FILE, PUBLISH_OPTIONS } from "../../global";
 import { tuneUpdaterForTest, doDownloadUpdate } from "./helper"
 import { createHTTPExecutorMock } from "./httpExecutor"
-import { AsarUpdater } from "electron-updater";
 import { createTestAppAdapter } from "../helpers/updaterTestUtil"
 
 var updater: AsarUpdater;

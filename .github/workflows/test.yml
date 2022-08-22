@@ -57,13 +57,16 @@ jobs:
         working-directory: ./test
         run: npm run test:unit
 
-      - name: e2e xvfb tests
+      - name: e2e xvfb tests(Windows)
+        if: runner.os == 'Windows'
         uses: GabrielBB/xvfb-action@v1
         with:
           working-directory: ./test
-          run: |
-               if [ '$RUNNER_OS' == 'Windows' ]; then
-                    npm run test:e2e:windows
-               else
-                    npm run test:e2e:gnu
-               fi
+          run: npm run test:e2e:windows
+
+      - name: e2e xvfb tests(GNU)
+        if: runner.os != 'Windows'
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          working-directory: ./test
+          run: npm run test:e2e:gnu

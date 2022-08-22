@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test'
 import { ElectronApplication } from 'playwright'
 import { ipcMainInvokeHandler } from 'electron-playwright-helpers'
-import { DIST_DIR } from "../global"
-import { generateTestingProjects, spawnExecutable } from "./helper"
 import * as http from 'http'
 const fsExtra = require('fs-extra')
 const path = require('path')
+
+import { DIST_DIR } from "../global"
+import { generateTestingProjects, spawnExecutable } from "./helper"
 const { createStaticServer } = require("../e2e/http-server.js");
 
 let server: http.Server;

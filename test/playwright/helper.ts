@@ -1,11 +1,12 @@
 import * as builder from 'electron-builder'
+import { parseElectronApp } from 'electron-playwright-helpers'
+import { _electron as electron } from 'playwright'
+const path = require('path')
+
 import { platform } from "../units/electron-builder/helper"
 import { BuildConfig } from "../units/electron-builder/config"
 import { DIST_DIR } from "../global"
-import { parseElectronApp } from 'electron-playwright-helpers'
-import { _electron as electron } from 'playwright'
 const { generateElectronProject } = require("../builder.js")
-const path = require('path')
 
 export async function buildElectron(config: BuildConfig) {
   const args = {

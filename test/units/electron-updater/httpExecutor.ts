@@ -1,4 +1,4 @@
-import { OLD_FILE, NEW_FILE } from "./config"
+import { OLD_FILE, NEW_FILE } from "../../global"
 const fs = require("fs");
 
 export function createHTTPExecutorMock(): any {

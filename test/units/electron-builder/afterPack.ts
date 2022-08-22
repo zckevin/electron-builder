@@ -1,8 +1,9 @@
 import { AfterPackContext } from "app-builder-lib";
 import * as fsExtra from "fs-extra";
-import { TEST_ROOT_DIR } from "../../global";
 const symlinkDir = require('symlink-dir')
 const path = require('path');
+
+import { TEST_ROOT_DIR } from "../../global";
 
 export type AfterPackCallback = (context: AfterPackContext) => Promise<void>;
 

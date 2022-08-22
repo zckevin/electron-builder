@@ -1,7 +1,8 @@
 import { AfterPackContext } from "app-builder-lib";
+const path = require('path');
+
 import { TEST_ROOT_DIR } from "../../global";
 import { afterPackFns } from "./afterPack"
-const path = require('path');
 
 const platformConfig = {
   "asar": false,
