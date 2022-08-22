@@ -5,7 +5,7 @@ const path = require('path')
 
 import { platform } from "../units/electron-builder/helper"
 import { BuildConfig } from "../units/electron-builder/config"
-import { DIST_DIR } from "../global"
+import { DIST_DIR, getAppRootDir } from "../global"
 const { generateElectronProject } = require("../builder.js")
 
 export async function buildElectron(config: BuildConfig) {
@@ -39,12 +39,12 @@ export async function generateTestingProjects(versions: string[]) {
 }
 
 export async function spawnExecutable(version: string) {
-  const appRootDir = `electron-update-example-${version}.linux-unpacked`
-  const appInfo = parseElectronApp(path.join(DIST_DIR, appRootDir))
+  const appRootDir = getAppRootDir(version)
+  const appInfo = parseElectronApp(appRootDir)
 
   const electronApp = await electron.launch({
     args: [appInfo.main],
-    executablePath: path.join(DIST_DIR, appRootDir, "electron-update-example"),
+    executablePath: path.join(appRootDir, "electron-update-example"),
   })
 
   electronApp.on('window', async (page) => {

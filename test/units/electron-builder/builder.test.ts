@@ -8,7 +8,7 @@ import { DIST_DIR } from "../../global"
 const { generateElectronProject } = require("../../builder.js");
 
 // it may take some time to install/download Electron
-const timeout = 20 * 1000;
+const timeout = 60 * 1000;
 const version = '0.0.1'
 const rootDir = path.join(DIST_DIR, `builder-root-${version}`)
 

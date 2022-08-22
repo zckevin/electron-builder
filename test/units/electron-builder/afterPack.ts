@@ -36,20 +36,23 @@ async function copyUpdateYmlToResourcesDir(context: AfterPackContext) {
 }
 
 async function backupUnpackedProject(context: AfterPackContext) {
-  const srcFiles = [
-    "linux-unpacked/"
+  const possibleNames = [
+    "linux-unpacked/",
+    "win-unpacked/",
+    "mac/",
   ]
   const rootDir = context.outDir;
   const prefix = `${context.packager.appInfo.productName}-${context.packager.appInfo.version}`;
-  for (const name of srcFiles) {
+  for (const name of possibleNames) {
     const srcFilePath = path.join(rootDir, name);
-    if (!fsExtra.existsSync(srcFilePath)) {
-      throw new Error(`backupUnpackedProject: Cannot find srcFile: ${srcFilePath}`);
+    if (fsExtra.existsSync(srcFilePath)) {
+      const dstFilePath = path.join(rootDir, `${prefix}.${name}`);
+      fsExtra.copySync(srcFilePath, dstFilePath);
+      console.log(`backupUnpackedProject: Backup artifact ${srcFilePath} to ${dstFilePath}`);
+      return
     }
-    const dstFilePath = path.join(rootDir, `${prefix}.${name}`);
-    fsExtra.copySync(srcFilePath, dstFilePath);
-    console.log (`backupUnpackedProject: Backup artifact ${srcFilePath} to ${dstFilePath}`);
   }
+  throw new Error(`backupUnpackedProject: Cannot find any possible names in DIST_DIR: ${possibleNames}`);
 }
 
 export const afterPackFns = {

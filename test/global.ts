@@ -1,5 +1,8 @@
+import * as os from "os";
+
 const path = require("path");
 const appRoot = require("app-root-path");
+const fsExtra = require("fs-extra");
 
 // appRoot is @zckevin/electron-builder
 export const TEST_ROOT_DIR = path.join(appRoot.toString(), "test");
@@ -31,3 +34,25 @@ class FixtureFile {
 
 export const OLD_FILE = new FixtureFile("0.9.25");
 export const NEW_FILE = new FixtureFile("0.9.26");
+
+export function getAppRootDir(version: string): string {
+  let suffix = ""
+  switch (os.platform()) {
+    case "linux":
+      suffix = "linux-unpacked";
+      break
+    case "win32":
+      suffix = "win-unpacked";
+      break
+    case "darwin":
+      suffix = "mac";
+      break
+    default:
+      throw new Error(`getAppRootDir: Unknown platform: ${os.platform()}`);
+  }
+  const appRoot = path.join(DIST_DIR, `electron-update-example-${version}.${suffix}`);
+  if (!fsExtra.existsSync(appRoot)) {
+    throw new Error(`getAppRootDir: App root dir not found: ${appRoot}`);
+  }
+  return appRoot
+}
