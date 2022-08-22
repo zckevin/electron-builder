@@ -1,14 +1,26 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const { goHttpServer, goHttpServerGetVersion } = require("./binary.js")
-const { checkForUpdates } = require("./updater.js")
+const { app, ipcMain, BrowserWindow } = require('electron');
+const { pm } = require("./promises.js")
 
 app.commandLine.appendSwitch("disable-gpu");
 
 let win;
-let onReadyPromiseResolve;
-let onReadyPromise = new Promise(resolve => {
-  onReadyPromiseResolve = resolve;
-});
+
+pm.emplace("ready")
+
+ipcMain.handle("waitForReady", async () => {
+  const result = await pm.waitFor("ready");
+  return result;
+})
+
+process.on('uncaughtException', function (error) {
+  console.log("Electron main process uncaughtException", error);
+  pm.rejectAll(error)
+})
+
+process.on('unhandledRejection', function (error) {
+  console.log("Electron main process unhandledRejection", error);
+  pm.rejectAll(error)
+})
 
 function createDefaultWindow() {
   win = new BrowserWindow({
@@ -32,51 +44,8 @@ function deferExit() {
 
 app.on('ready', async function () {
   createDefaultWindow();
-  onReadyPromiseResolve();
+  pm.resolve("ready", null)
   deferExit();
 });
 
-app.on('window-all-closed', () => {
-  app.quit();
-});
-
-app.on('will-quit', () => {
-  goHttpServer.kill("SIGKILL");
-});
-
-ipcMain.handle("quit", async () => {
-  app.quit();
-  return true;
-});
-
-ipcMain.handle("hello-world", async () => {
-  deferExit();
-  return 1;
-})
-
-ipcMain.handle("checkForUpdates", async (event, testingOptions, config) => {
-  await onReadyPromise;
-  try {
-    return await checkForUpdates(testingOptions, config);
-  } catch (err) {
-    return err;
-  }
-});
-
-ipcMain.handle("getVersionGolang", async (event) => {
-  await onReadyPromise;
-  try {
-    return await goHttpServerGetVersion();
-  } catch (err) {
-    return err;
-  }
-});
-
-ipcMain.handle("getVersionJavascript", async (event) => {
-  await onReadyPromise;
-  try {
-    return require("./version.js").version;
-  } catch (err) {
-    return err;
-  }
-});
+require("./real-main.js");

@@ -66,6 +66,8 @@ class FileCopier {
   constructor() {
     this.srcFiles = [
       "main.js",
+      "real-main.js",
+      "promises.js",
       "binary.js",
       "updater.js",
       "version.html",

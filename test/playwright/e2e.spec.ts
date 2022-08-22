@@ -7,7 +7,7 @@ const path = require('path')
 
 import { DIST_DIR, getAppInfo } from "../global"
 import { generateTestingProjects, spawnExecutable } from "./helper"
-const { createStaticServer } = require("../e2e/http-server.js");
+const { createStaticServer } = require("./http-server.js");
 
 let server: http.Server;
 let electronApp: ElectronApplication
@@ -25,10 +25,6 @@ test.beforeEach(async () => {
   fsExtra.ensureDirSync(DIST_DIR)
   fsExtra.emptyDirSync(DIST_DIR)
 })
-
-// test.afterEach(async () => {
-//   await electronApp?.close()
-// })
 
 async function testUpdate(differencialUpdate: boolean) {
   const versions = ["0.0.1", "0.0.2"]
