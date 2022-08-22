@@ -32,6 +32,7 @@ async function testUpdate(differencialUpdate: boolean) {
   if (isCi) {
     // cause it took too long to generate testing projects in playwright test,
     // dist2 would be generated in CI script and could be reused by tests
+    console.log("env isCi == true")
     const preGeneratedDestDir = path.join(DIST_DIR, `../dist2`)
     if (!fsExtra.existsSync(preGeneratedDestDir)) {
       throw new Error(`preGeneratedDestDirForCi: dir not found: ${preGeneratedDestDir}`)
@@ -49,6 +50,7 @@ async function testUpdate(differencialUpdate: boolean) {
     let testingOptions: any = {
       throwOnFallback: differencialUpdate ? true : false,
       ignoreRealZipBackup: true,
+      removePendingZip: true,
       ignoreRealInstall: false, // do install
     }
     if (differencialUpdate) {
@@ -82,6 +84,7 @@ async function testUpdate(differencialUpdate: boolean) {
     const testingOptions = {
       throwOnFallback: true,
       ignoreRealZipBackup: true,
+      removePendingZip: true,
       ignoreRealInstall: true,
     }
     expect(await ipcMainInvokeHandler(electronApp, "checkForUpdates", testingOptions))

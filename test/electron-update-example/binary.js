@@ -1,32 +1,12 @@
 const { spawn } = require('child_process');
 const path = require('path');
-const os = require('os');
 const log = require('electron-log');
 const fetch = require('node-fetch');
+const { getGoBinaryInfo } = require("./binary-info.js")
 
 const goHttpServerApi = 'http://localhost:10086/version'
 
-function getBinName() {
-  let arch = os.arch();
-  let operatingSystem = os.platform();
-  // name mapping from Node -> Go
-  switch (arch) {
-    case "x64":
-      arch = "amd64";
-      break;
-    case "ia32":
-      arch = "386";
-      break;
-  }
-  switch (operatingSystem) {
-    case "win32":
-      operatingSystem = "windows";
-      break;
-  }
-  return `http-server-${operatingSystem}-${arch}`
-}
-
-const binPath = path.join(__dirname, getBinName());
+const binPath = path.join(__dirname, getGoBinaryInfo().name);
 log.info("electron-update-example: binary path", binPath);
 
 const goHttpServer = spawn(binPath);
@@ -53,6 +33,7 @@ async function goHttpServerGetVersion() {
 }
 
 module.exports = {
+  getGoBinaryInfo,
   goHttpServer,
   goHttpServerGetVersion,
 }
