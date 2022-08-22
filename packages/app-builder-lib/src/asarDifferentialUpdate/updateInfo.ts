@@ -19,14 +19,18 @@ export class AsarUpdateInfo {
    */
   constructor(public name: string, public version: string, public outDir: string, public appOutDir: string) {
     this.zipFilePath = path.join(outDir, this.getZipName());
-    this.blockmapPath = path.join(this.zipFilePath, `../${path.basename(this.zipFilePath)}.blockmap`);
+    this.blockmapPath = path.join(outDir, `${this.getZipName()}.blockmap`);
 
-    const ymlPrefix = "asar"
-    this.ymlPaths = [
-      path.join(outDir, `${ymlPrefix}.yml`),
-      path.join(outDir, `${ymlPrefix}-linux.yml`),
-      path.join(outDir, `${ymlPrefix}-mac.yml`),
-    ];
+    // backup yml files from "asar.yml" -> "electron-update-example-0.0.1.asar.yml"
+    const channel = "asar"
+    let ymlFiles: Array<string> = [];
+    [".yml", "-linux.yml", "-mac.yml"].forEach((suffix: string) => {
+      const backupPrefix = `${this.name}-${this.version}`;
+      const baseFileName = `${channel}${suffix}`;
+      ymlFiles.push(baseFileName);
+      ymlFiles.push(`${backupPrefix}.${baseFileName}`);
+    })
+    this.ymlPaths = ymlFiles.map(fileName => path.join(this.outDir, fileName));
   }
 
   getZipName() {

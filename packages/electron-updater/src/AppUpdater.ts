@@ -636,7 +636,7 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
     }
 
     if (this._testOnlyOptions?.removePendingZip) {
-      this._logger.info(`AsarUpdater testing mode: remove pending zip`)
+      this._logger.info(`AsarUpdater testing mode: remove pending zip if it exists in $CACHE/$PROJECT_NAME/pending/`)
       await downloadedUpdateHelper.cleanCacheDirForPendingUpdate()
     }
 

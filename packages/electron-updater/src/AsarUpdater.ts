@@ -19,10 +19,9 @@ export interface AsarUpdaterTesingOptions {
   throwOnFallback?: boolean
   ignoreRealInstall?: boolean
   ignoreRealZipBackup?: boolean
-  removeCachedZip?: boolean
+  // removeCachedZip?: boolean
   removePendingZip?: boolean
-
-  getCachedZipFile?: () => string
+  cachedZipFilePath?: string
 }
 
 export class AsarUpdater extends BaseUpdater {
@@ -37,15 +36,6 @@ export class AsarUpdater extends BaseUpdater {
 
   public isUpdaterActive(): boolean {
     return true
-    // if (process.env["APPIMAGE"] == null) {
-    //   if (process.env["SNAP"] == null) {
-    //     this._logger.warn("APPIMAGE env is not defined, current application is not an AppImage")
-    //   } else {
-    //     this._logger.info("SNAP env is defined, updater is disabled")
-    //   }
-    //   return false
-    // }
-    // return super.isUpdaterActive()
   }
 
   public getHttpExecutor(): ElectronHttpExecutor {
@@ -57,8 +47,8 @@ export class AsarUpdater extends BaseUpdater {
   //
   // warning: this.downloadedUpdateHelper is set after calling this.executeDownload()
   private getCachedZipFile(): string {
-    if (this.asarTestingOptions?.getCachedZipFile) {
-      return this.asarTestingOptions.getCachedZipFile()
+    if (this.asarTestingOptions?.cachedZipFilePath) {
+      return this.asarTestingOptions.cachedZipFilePath
     }
 
     const filePath = path.join(this.downloadedUpdateHelper!.cacheDir, CACHED_ZIP_FILE_NAME)
@@ -82,14 +72,7 @@ export class AsarUpdater extends BaseUpdater {
       this._logger.info(`AsarUpdater testing mode config: ${JSON.stringify(this.asarTestingOptions)}`)
     }
 
-    // if (this.asarTestingOptions?.removeCachedZip) {
-    //   try {
-    //     const filePath = this.getCachedZipFile();
-    //     fs.unlinkSync(filePath);
-    //     this._logger.info(`AsarUpdater testing mode: remove cached zip`)
-    //   } catch (err) { }
-    // }
-
+    // remove already downloaded zip in $CACHE_DIR/$PROJECT_NAME/pending/ for testing
     if (this.asarTestingOptions?.removePendingZip) {
       if (!this._testOnlyOptions) {
         this._testOnlyOptions = { platform: (process.platform as any) }
@@ -147,7 +130,8 @@ export class AsarUpdater extends BaseUpdater {
         oldFile: this.getCachedZipFile(),
         logger: this._logger,
         newFile: installerPath,
-        isUseMultipleRangeRequest: provider.isUseMultipleRangeRequest,
+        // isUseMultipleRangeRequest: provider.isUseMultipleRangeRequest,
+        isUseMultipleRangeRequest: false,
         requestHeaders: downloadUpdateOptions.requestHeaders,
         cancellationToken: downloadUpdateOptions.cancellationToken,
       }
@@ -159,7 +143,7 @@ export class AsarUpdater extends BaseUpdater {
       const blockMapDataList = await Promise.all(blockmapFileUrls.map(u => this.downloadBlockMap(u, downloadUpdateOptions)))
       await new GenericDifferentialDownloader(fileInfo.info, this.httpExecutor, downloadOptions).download(blockMapDataList[0], blockMapDataList[1])
       return false
-    } catch (e) {
+    } catch (e: any) {
       this._logger.info(`Cannot download differentially, fallback to full download: ${e.stack || e}`)
       if (this.asarTestingOptions?.throwOnFallback) {
         throw e

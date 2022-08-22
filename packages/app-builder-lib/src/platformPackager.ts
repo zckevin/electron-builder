@@ -303,12 +303,13 @@ export abstract class PlatformPackager<DC extends PlatformSpecificBuildOptions> 
       return
     }
 
-    await this.info.afterPack(packContext)
-
-    // asarDifferentialUpdate: generate differentialAsarZip after `afterPack` hook point
+    // ** order matters! **
+    // asarDifferentialUpdate: generate differentialAsarZip before `afterPack` hook point
     if (this.config.differentialAsarZip) {
       await generateDifferentialUpdate(packContext)
     }
+
+    await this.info.afterPack(packContext)
 
     if (framework.afterPack != null) {
       await framework.afterPack(packContext)
