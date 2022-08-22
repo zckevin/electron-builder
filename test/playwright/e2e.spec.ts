@@ -52,7 +52,7 @@ async function testUpdate(differencialUpdate: boolean) {
       .toStrictEqual(versions[0])
     expect(await ipcMainInvokeHandler(electronApp, "quit"))
       .toBeTruthy()
-    
+
     console.log("=================================================================")
     console.log(`updgraded from ${versions[0]} to ${versions[1]}!`)
     console.log("=================================================================")
@@ -77,9 +77,15 @@ async function testUpdate(differencialUpdate: boolean) {
 }
 
 test('Electron-update-example should be upgraded by falling back to full download update', async () => {
+  // set timeout to 3 minutes
+  test.setTimeout(3 * 60 * 1000)
+
   await testUpdate(false)
 })
 
 test('Electron-update-example should be upgraded using differencial update', async () => {
+  // set timeout to 3 minutes
+  test.setTimeout(3 * 60 * 1000)
+
   await testUpdate(true)
 })

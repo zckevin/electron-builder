@@ -2,7 +2,7 @@ import { PlaywrightTestConfig } from '@playwright/test'
 
 const config: PlaywrightTestConfig = {
   testDir: './playwright',
-  maxFailures: 1,
+  maxFailures: 3,
 }
 
 export default config

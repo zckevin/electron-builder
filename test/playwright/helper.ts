@@ -41,12 +41,14 @@ export async function generateTestingProjects(versions: string[]) {
 export async function spawnExecutable(version: string) {
   const appRootDir = getAppRootDir(version)
   const appInfo = parseElectronApp(appRootDir)
-
+  const executablePath = process.platform === "linux" ?
+    path.join(appRootDir, "electron-update-example") :
+    appInfo.executable;
+  
   const electronApp = await electron.launch({
     args: [appInfo.main],
-    executablePath: path.join(appRootDir, "electron-update-example"),
+    executablePath,
   })
-
   electronApp.on('window', async (page) => {
     const filename = page.url()?.split('/').pop()
     console.log(`Window opened: ${filename}`)
