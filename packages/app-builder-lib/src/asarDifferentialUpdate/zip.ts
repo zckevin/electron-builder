@@ -1,4 +1,5 @@
 import { AsarUpdateInfo } from "./updateInfo";
+import { parseElectronApp } from 'electron-playwright-helpers'
 
 const fs = require('fs');
 const path = require('path');
@@ -6,7 +7,8 @@ const archiver = require('archiver');
 
 export async function zipAsar(updateInfo: AsarUpdateInfo) {
 	// e.g. //electron-updater-example/dist/linux-unpacked/resources
-	const resourcesDir = path.join(updateInfo.appOutDir, 'resources');
+	const appInfo = parseElectronApp(updateInfo.appOutDir);
+	const resourcesDir = path.join(appInfo.main, '../../');
 	const output = fs.createWriteStream(updateInfo.zipFilePath);
 
 	const archive = archiver('zip', {

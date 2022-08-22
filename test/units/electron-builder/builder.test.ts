@@ -37,7 +37,6 @@ test("Builder should succceed on build unpacked project with differentialAsarZip
     targets: platform.createTarget(),
     config: new BuildConfig(rootDir)
       .withDifferentialAsar(true)
-      .withLinkElectronUpdaterToOutDir(true)
       .config,
   };
   await builder.build(args as any)

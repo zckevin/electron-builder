@@ -23,7 +23,6 @@ export const basicConfig = {
 export class BuildConfig {
   private _config: any = basicConfig;
 
-  private linkModuleToOutDir = false;
   private copyUpdateYmlToResourcesDir = false;
   private backupUnpackedProject = false;
 
@@ -34,9 +33,6 @@ export class BuildConfig {
   get config() {
     // ** order matters! **
     this._config.afterPack = async (context: AfterPackContext) => {
-      if (this.linkModuleToOutDir) {
-        await afterPackFns.linkModuleToOutDir(context);
-      }
       if (this.copyUpdateYmlToResourcesDir) {
         await afterPackFns.copyUpdateYmlToResourcesDir(context);
       }
@@ -54,11 +50,6 @@ export class BuildConfig {
 
   withDifferentialAsar(enabled: boolean) {
     this._config.differentialAsarZip = enabled;
-    return this;
-  }
-
-  withLinkElectronUpdaterToOutDir(enabled: boolean) {
-    this.linkModuleToOutDir = enabled;
     return this;
   }
 

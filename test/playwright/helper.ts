@@ -1,11 +1,13 @@
 import * as builder from 'electron-builder'
 import { parseElectronApp } from 'electron-playwright-helpers'
 import { _electron as electron } from 'playwright'
+import * as fsExtra from "fs-extra";
+const symlinkDir = require('symlink-dir')
 const path = require('path')
 
 import { platform } from "../units/electron-builder/helper"
 import { BuildConfig } from "../units/electron-builder/config"
-import { DIST_DIR, getAppRootDir } from "../global"
+import { TEST_ROOT_DIR, DIST_DIR, getAppRootDir } from "../global"
 const { generateElectronProject } = require("../builder.js")
 
 export async function buildElectron(config: BuildConfig) {
@@ -31,7 +33,6 @@ export async function generateTestingProjects(versions: string[]) {
       version,
       new BuildConfig()
         .withDifferentialAsar(true)
-        .withLinkElectronUpdaterToOutDir(true)
         .withCopyUpdateYmlToResourcesDir(true)
         .withBackupUnpackedProject(true)
     )
@@ -44,6 +45,9 @@ export async function spawnExecutable(version: string) {
   const executablePath = process.platform === "linux" ?
     path.join(appRootDir, "electron-update-example") :
     appInfo.executable;
+
+  // HACK here
+  linkModuleToOutDir(appInfo.main)
   
   const electronApp = await electron.launch({
     args: [appInfo.main],
@@ -66,3 +70,17 @@ export async function spawnExecutable(version: string) {
   return electronApp
 }
 
+export async function linkModuleToOutDir(mainJsPath: string) {
+  const moduleName = "electron-updater";
+  const moduleDir = path.join(TEST_ROOT_DIR, "../packages/", moduleName);
+  const destDir = path.join(mainJsPath, "../node_modules/");
+  if (!fsExtra.existsSync(moduleDir)) {
+    throw new Error(`linkModulesToOutDir: Source module doesn't exist: ${moduleDir}`);
+  }
+  fsExtra.ensureDirSync(destDir);
+  const { warn } = await symlinkDir(moduleDir, path.join(destDir, moduleName))
+  if (warn) {
+    throw new Error(`linkModulesToOutDir error: ${warn}`);
+  }
+  console.log(`linkModulesToOutDir: Linked ${moduleDir} to ${destDir}`);
+}

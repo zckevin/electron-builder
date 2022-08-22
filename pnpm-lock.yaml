@@ -116,6 +116,7 @@ importers:
       ejs: ^3.1.7
       electron-builder-squirrel-windows: workspace:*
       electron-osx-sign: ^0.6.0
+      electron-playwright-helpers: ^1.2.0
       electron-publish: workspace:*
       form-data: ^4.0.0
       fs-extra: ^10.1.0
@@ -143,6 +144,7 @@ importers:
       debug: registry.npmmirror.com/debug/4.3.4
       ejs: registry.npmmirror.com/ejs/3.1.8
       electron-osx-sign: registry.npmmirror.com/electron-osx-sign/0.6.0
+      electron-playwright-helpers: 1.2.0
       electron-publish: link:../electron-publish
       form-data: registry.npmmirror.com/form-data/4.0.0
       fs-extra: registry.npmmirror.com/fs-extra/10.1.0

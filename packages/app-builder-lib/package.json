@@ -59,6 +59,7 @@
     "debug": "^4.3.4",
     "ejs": "^3.1.7",
     "electron-osx-sign": "^0.6.0",
+    "electron-playwright-helpers": "^1.2.0",
     "electron-publish": "workspace:*",
     "form-data": "^4.0.0",
     "fs-extra": "^10.1.0",
