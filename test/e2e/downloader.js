@@ -21,12 +21,12 @@ async function differencialDownload() {
     updater.appVersion = OLD_FILE.version;
 
     // manually set cache zip file path
-    updater.asarTestingOptions.getCachedZipFile = () => {
+    updater.testingOptions.getCachedZipFile = () => {
       return OLD_FILE.zipPath();
     }
 
     // remove pending zip file before downloading
-    updater.asarTestingOptions.removePendingZip = true;
+    updater.testingOptions.removePendingZip = true;
   }
 
   doDownloadUpdate(updater, ymlURL);
@@ -51,10 +51,10 @@ async function fallbackToFullDownload() {
     updater.appVersion = OLD_FILE.version;
 
     // remove pending zip file before downloading
-    updater.asarTestingOptions.removePendingZip = true;
+    updater.testingOptions.removePendingZip = true;
 
     // manually enable testing fallback
-    updater.asarTestingOptions.throwOnFallback = false;
+    updater.testingOptions.throwOnFallback = false;
   }
 
   doDownloadUpdate(updater, ymlURL);

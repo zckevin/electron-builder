@@ -33,7 +33,7 @@ export function tuneUpdaterForTest(updater: AsarUpdater) {
   updater.updateConfigPath = path.join(FIXTURES_DIR, "app-update.yml");
   updater.downloadBlockMap = mockDownloadBlockMap;
 
-  updater.asarTestingOptions = {
+  updater.testingOptions = {
     throwOnFallback: true,
     ignoreRealInstall: true,
     ignoreRealZipBackup: true,

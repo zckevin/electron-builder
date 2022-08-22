@@ -32,7 +32,7 @@ test("Full download fallback should call httpExecutor.download()", async () => {
   tuneUpdaterForTest(updater);
 
   // for updater to fallback to full download
-  updater.asarTestingOptions!.throwOnFallback = false;
+  updater.testingOptions!.throwOnFallback = false;
   updater.httpExecutor = createHTTPExecutorMock();
 
   try {
@@ -48,7 +48,7 @@ test("Differencial download should succeed with existing/specified `oldfile`", a
   tuneUpdaterForTest(updater);
 
   // set oldfile path
-  updater.asarTestingOptions!.cachedZipFilePath = OLD_FILE.zipPath();
+  updater.testingOptions!.cachedZipFilePath = OLD_FILE.zipPath();
   updater.httpExecutor = createHTTPExecutorMock();
 
   try {
@@ -64,7 +64,7 @@ test("Differencial download should fallback to full download if current oldfile 
   tuneUpdaterForTest(updater);
 
   // set oldFile path to corrupted file
-  updater.asarTestingOptions!.cachedZipFilePath = OLD_FILE.zipPath() + ".corrupted";
+  updater.testingOptions!.cachedZipFilePath = OLD_FILE.zipPath() + ".corrupted";
   updater.httpExecutor = createHTTPExecutorMock();
 
   try {

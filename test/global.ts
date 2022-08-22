@@ -1,4 +1,5 @@
 import * as os from "os";
+import { parseElectronApp } from 'electron-playwright-helpers'
 
 const path = require("path");
 const appRoot = require("app-root-path");
@@ -35,6 +36,15 @@ class FixtureFile {
 export const OLD_FILE = new FixtureFile("0.9.25");
 export const NEW_FILE = new FixtureFile("0.9.26");
 
+export interface AppInfo {
+  version: string
+  name: string
+  rootDir: string
+  resourcesDir: string
+  mainFilePath: string
+  executablePath: string
+}
+
 export function getAppRootDir(version: string): string {
   let suffix = ""
   switch (os.platform()) {
@@ -55,4 +65,24 @@ export function getAppRootDir(version: string): string {
     throw new Error(`getAppRootDir: App root dir not found: ${appRoot}`);
   }
   return appRoot
+}
+
+export function getAppInfo(version: string): AppInfo {
+  const appRootDir = getAppRootDir(version)
+  const helpersAppInfo = parseElectronApp(appRootDir)
+  const name = helpersAppInfo.name
+  // HACK here, inconsistent between linux & win+mac
+  const executablePath = process.platform === "linux" ?
+    path.join(appRootDir, name) :
+    helpersAppInfo.executable;
+  const resourcesDir = path.join(helpersAppInfo.main, "../../");
+
+  return {
+    version: version,
+    name: helpersAppInfo.name,
+    rootDir: appRootDir,
+    resourcesDir: resourcesDir,
+    executablePath: executablePath,
+    mainFilePath: helpersAppInfo.main,
+  }
 }

@@ -5,7 +5,7 @@ import * as http from 'http'
 const fsExtra = require('fs-extra')
 const path = require('path')
 
-import { DIST_DIR } from "../global"
+import { DIST_DIR, getAppInfo } from "../global"
 import { generateTestingProjects, spawnExecutable } from "./helper"
 const { createStaticServer } = require("../e2e/http-server.js");
 
@@ -26,9 +26,9 @@ test.beforeEach(async () => {
   fsExtra.emptyDirSync(DIST_DIR)
 })
 
-test.afterEach(async () => {
-  await electronApp?.close()
-})
+// test.afterEach(async () => {
+//   await electronApp?.close()
+// })
 
 async function testUpdate(differencialUpdate: boolean) {
   const versions = ["0.0.1", "0.0.2"]
@@ -46,18 +46,23 @@ async function testUpdate(differencialUpdate: boolean) {
     await generateTestingProjects(versions)
   }
 
+  const appInfo = getAppInfo(versions[0])
+
   {
-    electronApp = await spawnExecutable(versions[0])
-    let asarTestingOptions: any = {
+    electronApp = await spawnExecutable(appInfo)
+    let testingOptions: any = {
       throwOnFallback: differencialUpdate ? true : false,
       ignoreRealZipBackup: true,
       ignoreRealInstall: false, // do install
     }
     if (differencialUpdate) {
-      asarTestingOptions.cachedZipFilePath =
+      testingOptions.cachedZipFilePath =
         path.join(DIST_DIR, `electron-update-example-${versions[0]}.asar.zip`)
     }
-    expect(await ipcMainInvokeHandler(electronApp, "checkForUpdates", asarTestingOptions))
+    const asarUpdaterConfig = {
+      resourcesDir: appInfo.resourcesDir,
+    }
+    expect(await ipcMainInvokeHandler(electronApp, "checkForUpdates", testingOptions, asarUpdaterConfig))
       .toStrictEqual(["update-available", "update-downloaded"])
     expect(await ipcMainInvokeHandler(electronApp, "getVersionGolang"))
       .toContain(versions[0])
@@ -65,25 +70,25 @@ async function testUpdate(differencialUpdate: boolean) {
       .toStrictEqual(versions[0])
     expect(await ipcMainInvokeHandler(electronApp, "quit"))
       .toBeTruthy()
+    await electronApp?.waitForEvent("close")
 
     console.log("=================================================================")
     console.log(`updgraded from ${versions[0]} to ${versions[1]}!`)
     console.log("=================================================================")
   }
 
-  await electronApp?.close()
   // TODO: maybe we should add an event to signal the update is complete?
   // sleep for 1 second to make sure the app is updated
   await new Promise(resolve => setTimeout(resolve, 1000))
 
   {
-    electronApp = await spawnExecutable(versions[0])
-    const asarTestingOptions = {
+    electronApp = await spawnExecutable(appInfo)
+    const testingOptions = {
       throwOnFallback: true,
       ignoreRealZipBackup: true,
       ignoreRealInstall: true,
     }
-    expect(await ipcMainInvokeHandler(electronApp, "checkForUpdates", asarTestingOptions))
+    expect(await ipcMainInvokeHandler(electronApp, "checkForUpdates", testingOptions))
       .toStrictEqual(["update-not-available"])
     expect(await ipcMainInvokeHandler(electronApp, "getVersionGolang"))
       .toContain(versions[1])
@@ -91,6 +96,7 @@ async function testUpdate(differencialUpdate: boolean) {
       .toStrictEqual(versions[1])
     expect(await ipcMainInvokeHandler(electronApp, "quit"))
       .toBeTruthy()
+    await electronApp?.waitForEvent("close")
   }
 }
 

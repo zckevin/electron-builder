@@ -24,10 +24,15 @@ export interface AsarUpdaterTesingOptions {
   cachedZipFilePath?: string
 }
 
+export interface AsarUpdaterConfig {
+  resourcesDir: string
+}
+
 export class AsarUpdater extends BaseUpdater {
   // could be set on tesing
   public appVersion: string = this.app.version
-  public asarTestingOptions: AsarUpdaterTesingOptions | null = null
+  public testingOptions: AsarUpdaterTesingOptions | null = null
+  public config: AsarUpdaterConfig | null = null
 
   constructor(options?: AllPublishOptions | null, app?: any) {
     super(options, app)
@@ -47,8 +52,8 @@ export class AsarUpdater extends BaseUpdater {
   //
   // warning: this.downloadedUpdateHelper is set after calling this.executeDownload()
   private getCachedZipFile(): string {
-    if (this.asarTestingOptions?.cachedZipFilePath) {
-      return this.asarTestingOptions.cachedZipFilePath
+    if (this.testingOptions?.cachedZipFilePath) {
+      return this.testingOptions.cachedZipFilePath
     }
 
     const filePath = path.join(this.downloadedUpdateHelper!.cacheDir, CACHED_ZIP_FILE_NAME)
@@ -60,7 +65,7 @@ export class AsarUpdater extends BaseUpdater {
 
   private backupDownloadAsarZip(downloadedFilePath: string): void {
     this._logger.info(`Backup downloaded asar zip(${downloadedFilePath}) to parent folder`)
-    if (this.asarTestingOptions?.ignoreRealZipBackup) {
+    if (this.testingOptions?.ignoreRealZipBackup) {
       this._logger.info("AsarUpdater: testonly, ignoring real zip backup")
       return
     }
@@ -68,12 +73,12 @@ export class AsarUpdater extends BaseUpdater {
   }
 
   public doDownloadUpdate(downloadUpdateOptions: DownloadUpdateOptions): Promise<Array<string>> {
-    if (this.asarTestingOptions) {
-      this._logger.info(`AsarUpdater testing mode config: ${JSON.stringify(this.asarTestingOptions)}`)
+    if (this.testingOptions) {
+      this._logger.info(`AsarUpdater testing mode config: ${JSON.stringify(this.testingOptions)}`)
     }
 
     // remove already downloaded zip in $CACHE_DIR/$PROJECT_NAME/pending/ for testing
-    if (this.asarTestingOptions?.removePendingZip) {
+    if (this.testingOptions?.removePendingZip) {
       if (!this._testOnlyOptions) {
         this._testOnlyOptions = { platform: (process.platform as any) }
       }
@@ -145,7 +150,7 @@ export class AsarUpdater extends BaseUpdater {
       return false
     } catch (e: any) {
       this._logger.info(`Cannot download differentially, fallback to full download: ${e.stack || e}`)
-      if (this.asarTestingOptions?.throwOnFallback) {
+      if (this.testingOptions?.throwOnFallback) {
         throw e
       }
       return true
@@ -153,16 +158,19 @@ export class AsarUpdater extends BaseUpdater {
   }
 
   protected doInstall(options: InstallOptions): boolean {
-    const exePath = require("electron").app.getPath("exe");
-    const resourcesDirPath = path.dirname(exePath);
+    const resourcesDirPath = this.config?.resourcesDir
+    if (!resourcesDirPath) {
+      throw new Error("AsarUpdater: resourcesDir is not set")
+    }
 
     this._logger.info("AsarUpdater: extracting to " + resourcesDirPath);
-    if (this.asarTestingOptions?.ignoreRealInstall) {
+    if (this.testingOptions?.ignoreRealInstall) {
       this._logger.info("AsarUpdater: testonly, ignoring real install");
       return true
     }
     const zip = new AdmZip(options.installerPath);
-    zip.extractAllTo(resourcesDirPath, /*overwrite*/ true, /*permissions*/ true);
+    // WARN: extract to resources dir's parent folder
+    zip.extractAllTo(path.join(resourcesDirPath, ".."), /*overwrite*/ true, /*permissions*/ true);
     return true
   }
 }

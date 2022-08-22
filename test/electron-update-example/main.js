@@ -54,10 +54,10 @@ ipcMain.handle("hello-world", async () => {
   return 1;
 })
 
-ipcMain.handle("checkForUpdates", async (event, updaterTestOptions) => {
+ipcMain.handle("checkForUpdates", async (event, testingOptions, config) => {
   await onReadyPromise;
   try {
-    return await checkForUpdates(updaterTestOptions);
+    return await checkForUpdates(testingOptions, config);
   } catch (err) {
     return err;
   }

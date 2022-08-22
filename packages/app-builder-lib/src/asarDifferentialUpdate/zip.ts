@@ -1,43 +1,39 @@
-import { AsarUpdateInfo } from "./updateInfo";
-import { parseElectronApp } from 'electron-playwright-helpers'
+import { AsarOutputInfo } from "./outputInfo";
 
 const fs = require('fs');
-const path = require('path');
 const archiver = require('archiver');
 
-export async function zipAsar(updateInfo: AsarUpdateInfo) {
-	// e.g. //electron-updater-example/dist/linux-unpacked/resources
-	const appInfo = parseElectronApp(updateInfo.appOutDir);
-	const resourcesDir = path.join(appInfo.main, '../../');
-	const output = fs.createWriteStream(updateInfo.zipFilePath);
+export async function zipAsar(outputInfo: AsarOutputInfo) {
+  const resourcesDir = outputInfo.resourcesDir;
+  const output = fs.createWriteStream(outputInfo.zipFilePath);
 
-	const archive = archiver('zip', {
-		zlib: { level: 1 } // fastest
-	});
+  const archive = archiver('zip', {
+    zlib: { level: 1 } // fastest
+  });
 
-	return new Promise((resolve, reject) => {
-		output.on('close', function () {
-			console.log("zipAsar: archive finalized, add ", archive.pointer() + ' total bytes');
-			resolve(null)
-		});
+  return new Promise((resolve, reject) => {
+    output.on('close', function () {
+      console.log("zipAsar: archive finalized, add ", archive.pointer() + ' total bytes');
+      resolve(null)
+    });
 
-		// good practice to catch warnings (ie stat failures and other non-blocking errors)
-		archive.on('warning', function (err: any) {
-			if (err.code === 'ENOENT') {
-				// log warning
-			} else {
-				// throw error
-				throw err;
-			}
-		});
+    // good practice to catch warnings (ie stat failures and other non-blocking errors)
+    archive.on('warning', function (err: any) {
+      if (err.code === 'ENOENT') {
+        // log warning
+      } else {
+        // throw error
+        throw err;
+      }
+    });
 
-		archive.on('error', function (err: any) {
-            reject(err);
-		});
+    archive.on('error', function (err: any) {
+      reject(err);
+    });
 
-		archive.pipe(output);
+    archive.pipe(output);
 
-		archive.directory(resourcesDir, 'resources');
-		archive.finalize();
-	})
+    archive.directory(resourcesDir, 'resources');
+    archive.finalize();
+  })
 }

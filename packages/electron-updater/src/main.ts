@@ -10,7 +10,7 @@ export { Provider } from "./providers/Provider"
 export { AppImageUpdater } from "./AppImageUpdater"
 export { MacUpdater } from "./MacUpdater"
 export { NsisUpdater } from "./NsisUpdater"
-export { AsarUpdater } from "./AsarUpdater"
+export { AsarUpdater, AsarUpdaterConfig } from "./AsarUpdater"
 
 // autoUpdater to mimic electron bundled autoUpdater
 let _autoUpdater: any

@@ -1,5 +1,4 @@
 import * as builder from 'electron-builder'
-import { parseElectronApp } from 'electron-playwright-helpers'
 import { _electron as electron } from 'playwright'
 import * as fsExtra from "fs-extra";
 const symlinkDir = require('symlink-dir')
@@ -7,7 +6,7 @@ const path = require('path')
 
 import { platform } from "../units/electron-builder/helper"
 import { BuildConfig } from "../units/electron-builder/config"
-import { TEST_ROOT_DIR, DIST_DIR, getAppRootDir } from "../global"
+import { TEST_ROOT_DIR, DIST_DIR, AppInfo } from "../global"
 const { generateElectronProject } = require("../builder.js")
 
 export async function buildElectron(config: BuildConfig) {
@@ -39,20 +38,14 @@ export async function generateTestingProjects(versions: string[]) {
   }
 }
 
-export async function spawnExecutable(version: string) {
-  const appRootDir = getAppRootDir(version)
-  const appInfo = parseElectronApp(appRootDir)
-  const executablePath = process.platform === "linux" ?
-    path.join(appRootDir, "electron-update-example") :
-    appInfo.executable;
-
+export async function spawnExecutable(appInfo: AppInfo) {
   // HACK here
-  linkModuleToOutDir(appInfo.main)
-  
+  linkModuleToOutDir(appInfo)
+
   const electronApp = await electron.launch({
-    args: [appInfo.main],
-    timeout: 10 * 60 * 1000,
-    executablePath,
+    args: [appInfo.mainFilePath],
+    executablePath: appInfo.executablePath,
+    timeout: 3 * 60 * 1000,
   })
   electronApp.on('window', async (page) => {
     const filename = page.url()?.split('/').pop()
@@ -70,10 +63,10 @@ export async function spawnExecutable(version: string) {
   return electronApp
 }
 
-export async function linkModuleToOutDir(mainJsPath: string) {
+async function linkModuleToOutDir(appInfo: AppInfo) {
   const moduleName = "electron-updater";
   const moduleDir = path.join(TEST_ROOT_DIR, "../packages/", moduleName);
-  const destDir = path.join(mainJsPath, "../node_modules/");
+  const destDir = path.join(appInfo.mainFilePath, "../node_modules/");
   if (!fsExtra.existsSync(moduleDir)) {
     throw new Error(`linkModulesToOutDir: Source module doesn't exist: ${moduleDir}`);
   }

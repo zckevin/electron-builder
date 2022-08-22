@@ -6,9 +6,10 @@ const options = {
   url: "http://localhost:10087/"
 }
 
-async function checkForUpdates(asarTestingOptions) {
+async function checkForUpdates(testingOptions, config) {
   const updater = new AsarUpdater(options);
-  updater.asarTestingOptions = asarTestingOptions;
+  updater.testingOptions = testingOptions;
+  updater.config = config;
   updater.checkForUpdatesAndNotify();
 
   return new Promise((resolve) => {

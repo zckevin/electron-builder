@@ -1,15 +1,18 @@
+import { parseElectronApp } from 'electron-playwright-helpers'
 const path = require('path');
 
-export class AsarUpdateInfo {
+export class AsarOutputInfo {
+  public zipName: string;
   // e.g. //electron-updater-example/dist/electron-updater-example-0.9.1.asar.zip
-  public zipFilePath: string;
-
+  public zipFilePath: string
   // e.g. //electron-updater-example/dist/electron-updater-example-0.9.1.asar.zip.blockmap
-  public blockmapPath: string;
-
-  public ymlPaths: string[];
-
-  public blockmapInfo: any;
+  public blockmapPath: string
+  public blockmapInfo: any | null
+  public ymlPaths: string[]
+  /**
+   * the (input) resources dir to pack into the the output zip
+   */
+  public resourcesDir: string
 
   /**
    * @param name 
@@ -18,10 +21,11 @@ export class AsarUpdateInfo {
    * @param appOutDir e.g. //electron-updater-example/dist/linux-unpacked/
    */
   constructor(public name: string, public version: string, public outDir: string, public appOutDir: string) {
-    this.zipFilePath = path.join(outDir, this.getZipName());
-    this.blockmapPath = path.join(outDir, `${this.getZipName()}.blockmap`);
+    this.zipName = `${this.name}-${this.version}.asar.zip`;
+    this.zipFilePath = path.join(outDir, this.zipName);
+    this.blockmapPath = path.join(outDir, `${this.zipName}.blockmap`)
 
-    // backup yml files from "asar.yml" -> "electron-update-example-0.0.1.asar.yml"
+    // copy/rename yml files from "asar.yml" -> "electron-update-example-0.0.1.asar.yml"
     const channel = "asar"
     let ymlFiles: Array<string> = [];
     [".yml", "-linux.yml", "-mac.yml"].forEach((suffix: string) => {
@@ -30,11 +34,10 @@ export class AsarUpdateInfo {
       ymlFiles.push(baseFileName);
       ymlFiles.push(`${backupPrefix}.${baseFileName}`);
     })
-    this.ymlPaths = ymlFiles.map(fileName => path.join(this.outDir, fileName));
-  }
+    this.ymlPaths = ymlFiles.map(fileName => path.join(outDir, fileName));
 
-  getZipName() {
-    return `${this.name}-${this.version}.asar.zip`;
+    const appInfo = parseElectronApp(this.appOutDir);
+    this.resourcesDir = path.join(appInfo.main, '../../');
   }
 
   setBlockmapInfo(info: any) {
