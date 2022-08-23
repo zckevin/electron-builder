@@ -1,3 +1,12 @@
+// Github actions' OS X runner has very limitted IO performance,
+// it took a undetermined long period of time to generate new projects
+// in playwright tests and would fail if we don't set a large enough timeout.
+//
+// Run generator in test.yml instead of playwright tests
+//
+// Artifacts would be saved into /test/dist2, and it would be copied into //test/dist
+// in tests, /test/dist2 could be reused between tests
+
 import * as fsExtra from "fs-extra"
 const path = require("path")
 

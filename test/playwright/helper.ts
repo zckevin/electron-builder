@@ -7,7 +7,7 @@ const path = require('path')
 import { platform } from "../units/electron-builder/helper"
 import { BuildConfig } from "../units/electron-builder/config"
 import { TEST_ROOT_DIR, DIST_DIR, AppInfo } from "../global"
-const { generateElectronProject } = require("../builder.js")
+import { generateElectronProject } from "../builder"
 
 export async function buildElectron(config: BuildConfig) {
   const args = {

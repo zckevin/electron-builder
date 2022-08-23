@@ -5,7 +5,7 @@ const path = require('path')
 import { BuildConfig } from "./config"
 import { platform } from './helper';
 import { DIST_DIR } from "../../global"
-const { generateElectronProject } = require("../../builder.js");
+import { generateElectronProject } from "../../builder"
 
 // it may take some time to install/download Electron
 const timeout = process.platform === "win32" ? 300 * 1000 : 60 * 1000;

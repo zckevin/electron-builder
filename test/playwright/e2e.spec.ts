@@ -30,8 +30,6 @@ async function testUpdate(differencialUpdate: boolean) {
   const versions = ["0.0.1", "0.0.2"]
 
   if (isCi) {
-    // cause it took too long to generate testing projects in playwright test,
-    // dist2 would be generated in CI script and could be reused by tests
     console.log("env isCi == true")
     const preGeneratedDestDir = path.join(DIST_DIR, `../dist2`)
     if (!fsExtra.existsSync(preGeneratedDestDir)) {
