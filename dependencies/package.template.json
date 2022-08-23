@@ -1,0 +1,13 @@
+{
+  "name": "@zckevin/electron-builder-dependencies",
+  "scripts": {
+    "build": "node ./get_all_monorepo_dependencies.js",
+    "prepublish": "npm run build"
+  },
+  "files": [
+    "package.json"
+  ],
+  "keywords": [],
+  "dependencies": {
+  }
+}

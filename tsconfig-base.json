@@ -21,31 +21,28 @@
 
     "noEmitOnError": true,
 
+    // use with https://github.com/janniks/basetag
+    // create symlink node_modules/$ -> ${package_root} at `postinstall` hook
     "plugins": [
       {
         "transform": "typescript-transform-aliases",
         "after": true,
         "afterDeclarations": true,
         "aliases": {
-          "^app-builder-lib(.*)$": "@zckevin/electron-builder/packages/app-builder-lib$1",
-          // "^builder-util(.*)$": "@zckevin/electron-builder/packages/builder-util$1",
-          // "^builder-util-runtime(.*)$": "@zckevin/electron-builder/packages/builder-util-runtime$1",
-          // "^dmg-builder(.*)$": "@zckevin/electron-builder/packages/dmg-builder$1",
-          // "^electron-builder(.*)$": "@zckevin/electron-builder/packages/electron-builder$1",
-          // "^electron-publish(.*)$": "@zckevin/electron-builder/packages/electron-publish$1",
-          // "^electron-builder-squirrel-windows(.*)$": "@zckevin/electron-builder/packages/electron-builder-squirrel-windows$1",
-          // "^electron-forge-maker-appimage(.*)$": "@zckevin/electron-builder/packages/electron-forge-maker-appimage$1",
-          // "^electron-forge-maker-nsis(.*)$": "@zckevin/electron-builder/packages/electron-forge-maker-nsis$1",
-          // "^electron-forge-maker-nsis-web(.*)$": "@zckevin/electron-builder/packages/electron-forge-maker-nsis-web$1",
-          // "^electron-forge-maker-snap(.*)$": "@zckevin/electron-builder/packages/electron-forge-maker-snap$1",
-          // "^electron-updater(.*)$": "@zckevin/electron-builder/packages/electron-updater$1",
+          "^app-builder-lib(.*)$": "$/packages/app-builder-lib$1",
+          "^builder-util(.*)$": "$/packages/builder-util$1",
+          "^builder-util-runtime(.*)$": "$/packages/builder-util-runtime$1",
+          "^dmg-builder(.*)$": "$/packages/dmg-builder$1",
+          "^electron-builder(.*)$": "$/packages/electron-builder$1",
+          "^electron-publish(.*)$": "$/packages/electron-publish$1",
+          "^electron-builder-squirrel-windows(.*)$": "$/packages/electron-builder-squirrel-windows$1",
+          "^electron-forge-maker-appimage(.*)$": "$/packages/electron-forge-maker-appimage$1",
+          "^electron-forge-maker-nsis(.*)$": "$/packages/electron-forge-maker-nsis$1",
+          "^electron-forge-maker-nsis-web(.*)$": "$/packages/electron-forge-maker-nsis-web$1",
+          "^electron-forge-maker-snap(.*)$": "$/packages/electron-forge-maker-snap$1",
+          "^electron-updater(.*)$": "$/packages/electron-updater$1",
         }
       }
     ],
-    // "paths": {
-    //   "@zckevin/electron-builder/packages/*": [
-    //     "./packages/*"
-    //   ],
-    // },
   }
 }
