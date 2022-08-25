@@ -31,7 +31,6 @@ import {
 import { executeAppBuilderAsJson } from "./util/appBuilder"
 import { computeFileSets, computeNodeModuleFileSets, copyAppFiles, ELECTRON_COMPILE_SHIM_FILENAME, transformFiles } from "./util/appFileCopier"
 import { expandMacro as doExpandMacro } from "./util/macroExpander"
-import { generateDifferentialUpdate } from "./asarDifferentialUpdate/index"
 
 export abstract class PlatformPackager<DC extends PlatformSpecificBuildOptions> {
   get packagerOptions(): PackagerOptions {
@@ -301,12 +300,6 @@ export abstract class PlatformPackager<DC extends PlatformSpecificBuildOptions> 
 
     if (this.info.cancellationToken.cancelled) {
       return
-    }
-
-    // ** order matters! **
-    // asarDifferentialUpdate: generate differentialAsarZip before `afterPack` hook point
-    if (this.config.differentialAsarZip) {
-      await generateDifferentialUpdate(packContext)
     }
 
     await this.info.afterPack(packContext)

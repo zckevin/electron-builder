@@ -266,13 +266,6 @@ export interface Configuration extends PlatformSpecificBuildOptions {
    * @default true
    */
   readonly removePackageKeywords?: boolean
-
-  /**
-   * Whether to generate asar update zip
-   * 
-   * @default true
-   */
-   readonly differentialAsarZip?: boolean
 }
 
 interface PackContext {
