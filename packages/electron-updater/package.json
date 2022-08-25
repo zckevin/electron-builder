@@ -15,6 +15,11 @@
   "files": [
     "out"
   ],
+  "scripts": {
+    "build": "tsc --build",
+    "build:force": "tsc --build --force",
+    "my-publish": "node ./publish.js"
+  },
   "dependencies": {
     "adm-zip": "^0.5.9",
     "builder-util-runtime": "9.1.0",
@@ -24,17 +29,18 @@
     "lodash.escaperegexp": "^4.1.2",
     "lodash.isequal": "^4.5.0",
     "semver": "^7.3.5",
+    "semver-compare": "^1.0.0",
     "semver-sort": "^1.0.0",
     "typed-emitter": "^2.1.0"
   },
   "devDependencies": {
-    "shelljs": "^0.8.5",
-    "@types/semver": "^7.3.6",
     "@types/fs-extra": "9.0.13",
     "@types/js-yaml": "4.0.3",
     "@types/lodash.escaperegexp": "4.1.6",
+    "@types/lodash.isequal": "4.5.5",
+    "@types/semver": "^7.3.6",
     "@types/semver-sort": "^0.0.1",
-    "@types/lodash.isequal": "4.5.5"
+    "shelljs": "^0.8.5"
   },
   "typings": "./out/main.d.ts",
   "publishConfig": {

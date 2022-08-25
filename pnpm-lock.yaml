@@ -343,6 +343,7 @@ importers:
       '@types/lodash.escaperegexp': 4.1.6
       '@types/lodash.isequal': 4.5.5
       '@types/semver': ^7.3.6
+      '@types/semver-compare': ^1.0.1
       '@types/semver-sort': ^0.0.1
       adm-zip: ^0.5.9
       builder-util-runtime: 9.1.0
@@ -352,6 +353,7 @@ importers:
       lodash.escaperegexp: ^4.1.2
       lodash.isequal: ^4.5.0
       semver: ^7.3.5
+      semver-compare: ^1.0.0
       semver-sort: ^1.0.0
       shelljs: ^0.8.5
       typed-emitter: ^2.1.0
@@ -364,6 +366,7 @@ importers:
       lodash.escaperegexp: registry.npmmirror.com/lodash.escaperegexp/4.1.2
       lodash.isequal: registry.npmmirror.com/lodash.isequal/4.5.0
       semver: registry.npmmirror.com/semver/7.3.7
+      semver-compare: 1.0.0
       semver-sort: 1.0.0
       typed-emitter: registry.npmmirror.com/typed-emitter/2.1.0
     devDependencies:
@@ -372,6 +375,7 @@ importers:
       '@types/lodash.escaperegexp': registry.npmmirror.com/@types/lodash.escaperegexp/4.1.6
       '@types/lodash.isequal': registry.npmmirror.com/@types/lodash.isequal/4.5.5
       '@types/semver': registry.npmmirror.com/@types/semver/7.3.12
+      '@types/semver-compare': 1.0.1
       '@types/semver-sort': 0.0.1
       shelljs: 0.8.5
 
@@ -1205,6 +1209,10 @@ packages:
     dependencies:
       '@types/node': 16.11.43
     dev: false
+
+  /@types/semver-compare/1.0.1:
+    resolution: {integrity: sha512-wx2LQVvKlEkhXp/HoKIZ/aSL+TvfJdKco8i0xJS3aR877mg4qBHzNT6+B5a61vewZHo79EdZavskGnRXEC2H6A==}
+    dev: true
 
   /@types/semver-sort/0.0.1:
     resolution: {integrity: sha512-abYNwum55FpJWDxcWjT1eNI3J5/KXS7cWY7KUgbr/l/vn/5vaB1ejUpipLPZba8BvdbJBAJCWIXfJYZvc4SwTA==}
@@ -3611,7 +3619,6 @@ packages:
   /semver-compare/1.0.0:
     resolution: {integrity: sha512-YM3/ITh2MJ5MtzaM429anh+x2jiLVjqILF4m4oyQB18W7Ggea7BfqdH/wGMK7dDiMghv/6WG7znWMwUDzJiXow==}
     dev: false
-    optional: true
 
   /semver-regex/3.1.4:
     resolution: {integrity: sha512-6IiqeZNgq01qGf0TId0t3NvKzSvUsjcpdEO3AQNeIjR6A2+ckTnQlDpl4qu1bjRv0RzN3FP9hzFmws3lKqRWkA==}

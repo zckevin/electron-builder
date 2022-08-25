@@ -14,6 +14,7 @@ import { ElectronHttpExecutor } from "./electronHttpExecutor"
 import * as fs from "fs"
 import * as semverSort from 'semver-sort';
 import { app } from "electron"
+const semverCmp = require('semver-compare');
 
 const CACHED_ZIP_FILE_NAME = "current.asar.zip"
 
@@ -26,6 +27,7 @@ export interface AsarUpdaterTesingOptions {
 }
 
 export class AsarUpdaterConfig {
+  autoDownload = true
   includesBinaryDir = true
   allowDowngrade = false
 }
@@ -45,7 +47,9 @@ export class AsarUpdater extends BaseUpdater {
     super(options, app)
     this.config = config;
     this.testingOptions = testingOptions;
-
+    if (this.config?.autoDownload === false) {
+      this.autoDownload = false
+    }
     this._logger.info(`Construct AsarUpdater with config: \n` +
       `${JSON.stringify(this.config, null, 2)}\n` +
       `${JSON.stringify(this.testingOptions, null, 2)}`
@@ -97,6 +101,11 @@ export class AsarUpdater extends BaseUpdater {
     const provider = downloadUpdateOptions.updateInfoAndProvider.provider
     let fileInfo: ResolvedUpdateFileInfo;
     if (this.config?.allowDowngrade && selectedTargetUrl) {
+      const selectedVersion = this.parseSemverFromFileName(selectedTargetUrl)
+      console.log("=====", selectedVersion, this.appVersion)
+      if (semverCmp(this.appVersion, selectedVersion) === 0) {
+        throw new Error(`AsarUpdater: can't update to the exact same version ${selectedVersion}`)
+      }
       fileInfo = provider.resolveFiles(downloadUpdateOptions.updateInfoAndProvider.info).find(it => it.url.href.includes(selectedTargetUrl))!
     } else {
       fileInfo = this.getLatestFile(provider.resolveFiles(downloadUpdateOptions.updateInfoAndProvider.info), "zip")!
@@ -228,14 +237,21 @@ export class AsarUpdater extends BaseUpdater {
     return this.config?.includesBinaryDir ? `-${operatingSystem}-${arch}` : ''
   }
 
+  private parseSemverFromFileName(fileName: string) {
+    const match = fileName.match(/-(\d+\.\d+\.\d+)/)
+    if (!match) {
+      throw new Error(`Cannot parse semver from file name "${fileName}"`)
+    }
+    return match[1]
+  }
+
   private getLatestFile(files: Array<ResolvedUpdateFileInfo>, extension: string, not?: Array<string>): ResolvedUpdateFileInfo | null | undefined {
     const filteredFileNames = files.filter(it => it.url.pathname.toLowerCase().endsWith(`.${extension}`)).map(it => path.basename(it.url.pathname))
     if (filteredFileNames.length === 0) {
       throw new Error(`No files with extension [.${extension}] found in UpdateInfo files: ${JSON.stringify(files)}`)
     }
-    const semverRegex = /-(\d+\.\d+\.\d+)/
     try {
-      const semvers = filteredFileNames.map(name => name.match(semverRegex)).filter(_ => _).map(result => result![1])
+      const semvers = filteredFileNames.map(name => this.parseSemverFromFileName(name))
       const latest = semverSort.desc(semvers)[0];
       return files.find(it => it.url.pathname.includes(latest));
     } catch(err) {
