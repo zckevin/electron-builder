@@ -407,6 +407,8 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
     this.emit("checking-for-update")
 
     const result = await this.getUpdateInfoAndProvider()
+    // we need this to be set for AsarUpdater downgrade
+    this.updateInfoAndProvider = result
     const updateInfo = result.info
     if (!(await this.isUpdateAvailable(updateInfo))) {
       this._logger.info(
@@ -419,7 +421,6 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
       }
     }
 
-    this.updateInfoAndProvider = result
     this.onUpdateAvailable(updateInfo)
 
     const cancellationToken = new CancellationToken()
@@ -445,7 +446,7 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
    * Start downloading update manually. You can use this method if `autoDownload` option is set to `false`.
    * @returns {Promise<string>} Path to downloaded file.
    */
-  downloadUpdate(cancellationToken: CancellationToken = new CancellationToken()): Promise<any> {
+  downloadUpdate(cancellationToken: CancellationToken = new CancellationToken(), selectedTargetUrl?: string): Promise<any> {
     const updateInfoAndProvider = this.updateInfoAndProvider
     if (updateInfoAndProvider == null) {
       const error = new Error("Please check update first")
@@ -477,7 +478,7 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
         requestHeaders: this.computeRequestHeaders(updateInfoAndProvider.provider),
         cancellationToken,
         disableWebInstaller: this.disableWebInstaller,
-      }).catch(e => {
+      }, selectedTargetUrl).catch(e => {
         throw errorHandler(e)
       })
     } catch (e: any) {
@@ -493,7 +494,7 @@ export abstract class AppUpdater extends (EventEmitter as new () => TypedEmitter
     this.emit(UPDATE_DOWNLOADED, event)
   }
 
-  protected abstract doDownloadUpdate(downloadUpdateOptions: DownloadUpdateOptions): Promise<Array<string>>
+  protected abstract doDownloadUpdate(downloadUpdateOptions: DownloadUpdateOptions, selectedTargetUrl?: string): Promise<Array<string>>
 
   /**
    * Restarts the app and installs the update after it has been downloaded.

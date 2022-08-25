@@ -1,0 +1,16 @@
+{
+  "name": "@zckevin/electron-asar-differential-updater",
+  "version": "0.0.7",
+  "description": "Electron asar differential updater for electron applications",
+  "author": "Cong Zuo(zckevin)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zckevin/electron-builder.git",
+    "directory": "packages/electron-updater"
+  },
+  "bugs": "https://github.com/zckevin/electron-builder/issues",
+  "homepage": "https://github.com/zckevin/electron-builder",
+  "dependencies": {
+    "builder-util-runtime": "9.1.0"
+  }
+}

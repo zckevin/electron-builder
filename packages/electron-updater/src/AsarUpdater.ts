@@ -5,13 +5,15 @@ import { BaseUpdater, InstallOptions } from "./BaseUpdater"
 import { DifferentialDownloaderOptions } from "./differentialDownloader/DifferentialDownloader"
 import { GenericDifferentialDownloader } from "./differentialDownloader/GenericDifferentialDownloader"
 import { DOWNLOAD_PROGRESS, ResolvedUpdateFileInfo } from "./main"
-import { findFile, Provider } from "./providers/Provider"
+import { Provider } from "./providers/Provider"
 import { blockmapFiles } from "./util"
 import { gunzipSync } from "zlib"
-import { copySync } from "fs-extra"
+import { copySync, existsSync } from "fs-extra"
 import * as AdmZip from "adm-zip"
 import { ElectronHttpExecutor } from "./electronHttpExecutor"
 import * as fs from "fs"
+import * as semverSort from 'semver-sort';
+import { app } from "electron"
 
 const CACHED_ZIP_FILE_NAME = "current.asar.zip"
 
@@ -19,24 +21,35 @@ export interface AsarUpdaterTesingOptions {
   throwOnFallback?: boolean
   ignoreRealInstall?: boolean
   ignoreRealZipBackup?: boolean
-  // removeCachedZip?: boolean
   removePendingZip?: boolean
   cachedZipFilePath?: string
 }
 
-export interface AsarUpdaterConfig {
-  resourcesDir: string
+export class AsarUpdaterConfig {
+  includesBinaryDir = true
+  allowDowngrade = false
 }
 
 export class AsarUpdater extends BaseUpdater {
   // could be set on tesing
   public appVersion: string = this.app.version
-  public testingOptions: AsarUpdaterTesingOptions | null = null
-  public config: AsarUpdaterConfig | null = null
+  public testingOptions: AsarUpdaterTesingOptions | undefined
+  public config: AsarUpdaterConfig | undefined;
 
-  constructor(options?: AllPublishOptions | null, app?: any) {
+  constructor(
+    config?: AsarUpdaterConfig,
+    testingOptions?: AsarUpdaterTesingOptions,
+    options?: AllPublishOptions | null,
+    app?: any,
+  ) {
     super(options, app)
-    this.allowDowngrade = true
+    this.config = config;
+    this.testingOptions = testingOptions;
+
+    this._logger.info(`Construct AsarUpdater with config: \n` +
+      `${JSON.stringify(this.config, null, 2)}\n` +
+      `${JSON.stringify(this.testingOptions, null, 2)}`
+    )
   }
 
   public isUpdaterActive(): boolean {
@@ -72,11 +85,7 @@ export class AsarUpdater extends BaseUpdater {
     copySync(downloadedFilePath, this.getCachedZipFile())
   }
 
-  public doDownloadUpdate(downloadUpdateOptions: DownloadUpdateOptions): Promise<Array<string>> {
-    if (this.testingOptions) {
-      this._logger.info(`AsarUpdater testing mode config: ${JSON.stringify(this.testingOptions)}`)
-    }
-
+  public doDownloadUpdate(downloadUpdateOptions: DownloadUpdateOptions, selectedTargetUrl?: string): Promise<Array<string>> {
     // remove already downloaded zip in $CACHE_DIR/$PROJECT_NAME/pending/ for testing
     if (this.testingOptions?.removePendingZip) {
       if (!this._testOnlyOptions) {
@@ -86,7 +95,20 @@ export class AsarUpdater extends BaseUpdater {
     }
 
     const provider = downloadUpdateOptions.updateInfoAndProvider.provider
-    const fileInfo = findFile(provider.resolveFiles(downloadUpdateOptions.updateInfoAndProvider.info), "zip")!
+    let fileInfo: ResolvedUpdateFileInfo;
+    if (this.config?.allowDowngrade && selectedTargetUrl) {
+      fileInfo = provider.resolveFiles(downloadUpdateOptions.updateInfoAndProvider.info).find(it => it.url.href.includes(selectedTargetUrl))!
+    } else {
+      fileInfo = this.getLatestFile(provider.resolveFiles(downloadUpdateOptions.updateInfoAndProvider.info), "zip")!
+    }
+    if (!fileInfo) {
+      console.error(
+        this.config?.allowDowngrade,
+        selectedTargetUrl,
+        provider.resolveFiles(downloadUpdateOptions.updateInfoAndProvider.info)
+      );
+      throw new Error(`No file found for provided selectedTargetUrl: ${selectedTargetUrl}`)
+    }
     return this.executeDownload({
       fileExtension: "zip",
       fileInfo,
@@ -158,11 +180,10 @@ export class AsarUpdater extends BaseUpdater {
   }
 
   protected doInstall(options: InstallOptions): boolean {
-    const resourcesDirPath = this.config?.resourcesDir
-    if (!resourcesDirPath) {
-      throw new Error("AsarUpdater: resourcesDir is not set")
+    const resourcesDirPath = this.getResourceDirPath();
+    if (!existsSync(resourcesDirPath)) {
+      throw new Error(`AsarUpdater: Cannot find resources dir "${resourcesDirPath}", update abort`)
     }
-
     this._logger.info("AsarUpdater: extracting to " + resourcesDirPath);
     if (this.testingOptions?.ignoreRealInstall) {
       this._logger.info("AsarUpdater: testonly, ignoring real install");
@@ -172,5 +193,54 @@ export class AsarUpdater extends BaseUpdater {
     // WARN: extract to resources dir's parent folder
     zip.extractAllTo(path.join(resourcesDirPath, ".."), /*overwrite*/ true, /*permissions*/ true);
     return true
+  }
+
+  private getResourceDirPath(): string {
+    const exePath = app.getPath("exe");
+    switch(process.platform) {
+      case "darwin":
+        // WARN: capitalized resources dir name
+        return path.join(path.dirname(exePath), "..", "Resources");
+      default:
+        return path.join(path.dirname(exePath), "resources");
+    }
+  }
+
+  public getChannelYmlFullName() {
+    let arch = process.arch as string;
+    let operatingSystem = process.platform as string;
+
+    // special name mapping from Node -> Go
+    switch (arch) {
+      case "x64":
+        arch = "amd64";
+        break;
+      case "ia32":
+        arch = "386";
+        break;
+    }
+    switch (operatingSystem) {
+      case "win32":
+        operatingSystem = "windows";
+        break;
+    }
+
+    return this.config?.includesBinaryDir ? `-${operatingSystem}-${arch}` : ''
+  }
+
+  private getLatestFile(files: Array<ResolvedUpdateFileInfo>, extension: string, not?: Array<string>): ResolvedUpdateFileInfo | null | undefined {
+    const filteredFileNames = files.filter(it => it.url.pathname.toLowerCase().endsWith(`.${extension}`)).map(it => path.basename(it.url.pathname))
+    if (filteredFileNames.length === 0) {
+      throw new Error(`No files with extension [.${extension}] found in UpdateInfo files: ${JSON.stringify(files)}`)
+    }
+    const semverRegex = /-(\d+\.\d+\.\d+)/
+    try {
+      const semvers = filteredFileNames.map(name => name.match(semverRegex)).filter(_ => _).map(result => result![1])
+      const latest = semverSort.desc(semvers)[0];
+      return files.find(it => it.url.pathname.includes(latest));
+    } catch(err) {
+      console.error("getLatestFile:", files, filteredFileNames, extension)
+      throw err
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { GenericServerOptions, HttpError, newError, UpdateInfo } from "builder-util-runtime"
 import { AppUpdater } from "../AppUpdater"
+import { AsarUpdater } from "../AsarUpdater"
 import { ResolvedUpdateFileInfo } from "../main"
 import { getChannelFilename, newBaseUrl, newUrlFromBase } from "../util"
 import { parseUpdateInfo, Provider, ProviderRuntimeOptions, resolveFiles } from "./Provider"
@@ -13,6 +14,9 @@ export class GenericProvider extends Provider<UpdateInfo> {
 
   private get channel(): string {
     const result = this.updater.channel || this.configuration.channel
+    if (this.updater.constructor.name === "AsarUpdater") {
+      return result + (this.updater as AsarUpdater).getChannelYmlFullName()
+    }
     return result == null ? this.getDefaultChannelName() : this.getCustomChannelName(result)
   }
 
