@@ -27,3 +27,7 @@ electron-builder-*.d.ts
 tsconfig.tsbuildinfo
 
 .pnpm-store/
+
+.yalc/
+yalc.lock
+
