@@ -11,7 +11,6 @@ import { gunzipSync } from "zlib"
 import { copySync, existsSync } from "fs-extra"
 import * as AdmZip from "adm-zip"
 import { ElectronHttpExecutor } from "./electronHttpExecutor"
-import * as fs from "fs"
 import * as semverSort from 'semver-sort';
 import { app } from "electron"
 const semverCmp = require('semver-compare');
@@ -72,11 +71,7 @@ export class AsarUpdater extends BaseUpdater {
     if (this.testingOptions?.cachedZipFilePath) {
       return this.testingOptions.cachedZipFilePath
     }
-
     const filePath = path.join(this.downloadedUpdateHelper!.cacheDir, CACHED_ZIP_FILE_NAME)
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`Cached file "${filePath}" does not exist`)
-    }
     return filePath
   }
 
