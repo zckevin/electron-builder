@@ -16,8 +16,9 @@
     "out"
   ],
   "scripts": {
-    "build": "tsc --build",
-    "build:force": "tsc --build --force",
+    "install:local": "sh ./local-install.sh",
+    "build": "tsc --build && npm run install:local",
+    "build:force": "tsc --build --force && npm run install:local",
     "my-publish": "node ./publish.js"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "lazy-val": "^1.0.5",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.isequal": "^4.5.0",
+    "rxjs": "^7.5.7",
     "semver": "^7.3.5",
     "semver-compare": "^1.0.0",
     "semver-sort": "^1.0.0",

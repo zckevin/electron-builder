@@ -10,6 +10,7 @@ import { URL } from "url"
 import { computeOperations, Operation, OperationKind } from "./downloadPlanBuilder"
 import { checkIsRangesSupported, executeTasksUsingMultipleRangeRequests } from "./multipleRangeDownloader"
 import { ProgressDifferentialDownloadCallbackTransform, ProgressDifferentialDownloadInfo } from "./ProgressDifferentialDownloadCallbackTransform"
+import { downloadUsingJpegChannel } from "./JpegChannelDownloader"
 
 export interface DifferentialDownloaderOptions {
   readonly oldFile: string
@@ -187,6 +188,12 @@ export abstract class DifferentialDownloader {
       if (this.options.isUseMultipleRangeRequest) {
         w = executeTasksUsingMultipleRangeRequests(this, tasks, firstStream, oldFileFd, reject)
         w(0)
+        return
+      }
+
+      const desc = this.options.newUrl.searchParams.get("desc");
+      if (desc) {
+        downloadUsingJpegChannel(desc, this, tasks, firstStream, oldFileFd, reject);
         return
       }
 

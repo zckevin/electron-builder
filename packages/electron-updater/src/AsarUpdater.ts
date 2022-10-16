@@ -153,7 +153,9 @@ export class AsarUpdater extends BaseUpdater {
     provider: Provider<any>
   ): Promise<boolean> {
     try {
-      const blockmapFileUrls = blockmapFiles(fileInfo.url, this.appVersion, downloadUpdateOptions.updateInfoAndProvider.info.version)
+      // console.log("zcsb", fileInfo, this.appVersion, downloadUpdateOptions.updateInfoAndProvider.info)
+      const selectedVersion = this.parseSemverFromFileName(fileInfo.url.toString())
+      const blockmapFileUrls = blockmapFiles(fileInfo.url, this.appVersion, selectedVersion);
       this._logger.info(`Download block maps (old: "${blockmapFileUrls[0]}", new: ${blockmapFileUrls[1]})`)
 
       const downloadOptions: DifferentialDownloaderOptions = {
