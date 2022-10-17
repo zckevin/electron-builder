@@ -16,7 +16,6 @@
     "build:electron-updater": "cd packages/electron-updater && pnpm run build:force"
   },
   "dependencies": {
-    "@zckevin/jpeg-file": "file:.yalc/@zckevin/jpeg-file",
     "basetag": "^2.0.1",
     "fs-extra": "10.0.0",
     "shelljs": "^0.8.5"

@@ -4,12 +4,15 @@
   "main": "main.js",
   "description": "electron-updater example project",
   "author": "Matt Haggard",
+  "scripts": {
+    "postinstall": "yalc add electron-updater"
+  },
   "dependencies": {
-    "@zckevin/jpeg-file": "file:.yalc/@zckevin/jpeg-file",
     "electron-updater": "file:.yalc/electron-updater",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "electron": "20.0.2"
+    "electron": "20.0.2",
+    "yalc": "^1.0.0-pre.53"
   }
 }

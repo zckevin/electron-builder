@@ -42,7 +42,6 @@
           "^electron-forge-maker-snap(.*)$": "$/packages/electron-forge-maker-snap$1",
           "^electron-updater(.*)$": "$/packages/electron-updater$1",
           "^asar-differential-builder(.*)$": "$/packages/asar-differential-builder$1",
-          "^@zckevin/jpeg-file": "$/.yalc/@zckevin/jpeg-file",
         }
       }
     ],
