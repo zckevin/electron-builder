@@ -1,0 +1,53 @@
+{
+  "name": "asar-differential-builder",
+  "version": "0.0.1",
+  "description": "",
+  "main": "out/index.js",
+  "files": [
+    "out"
+  ],
+  "scripts": {
+    "build:fifo": "source /home/zc/PROJECTS/weibo-jpeg-channel/.env && DEBUG=jpeg:* ts-node ./bin/build-fifo.ts"
+  },
+  "keywords": [
+    "electron",
+    "electron-builder",
+    "updater",
+    "asar",
+    "differential"
+  ],
+  "author": "Cong Zuo(zckevin)",
+  "license": "MIT",
+  "dependencies": {
+    "electron-updater": "workspace:*",
+    "electron-builder": "workspace:*",
+    "app-builder-lib": "workspace:*",
+    "builder-util": "workspace:*",
+    "builder-util-runtime": "workspace:*",
+    "archiver": "^5.3.1",
+    "electron": "^20.0.2",
+    "electron-playwright-helpers": "^1.2.0",
+    "find-up": "^5.0.0",
+    "fs-extra": "^10.1.0",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "object-boolean-combinations": "^4.1.0",
+    "semver-compare": "^1.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.25.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^28.1.7",
+    "@types/lodash": "^4.14.184",
+    "adm-zip": "^0.5.9",
+    "app-root-path": "^3.1.0",
+    "env-ci": "^7.3.0",
+    "http-server": "^14.1.1",
+    "jest": "^28.1.3",
+    "playwright": "^1.25.0",
+    "shelljs": "^0.8.5",
+    "symlink-dir": "^5.0.1",
+    "ts-jest": "^28.0.8",
+    "ts-node": "^10.9.1"
+  }
+}

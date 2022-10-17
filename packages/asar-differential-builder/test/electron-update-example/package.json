@@ -1,0 +1,15 @@
+{
+  "name": "electron-update-example",
+  "version": "0.9.26",
+  "main": "main.js",
+  "description": "electron-updater example project",
+  "author": "Matt Haggard",
+  "dependencies": {
+    "@zckevin/jpeg-file": "file:.yalc/@zckevin/jpeg-file",
+    "electron-updater": "file:.yalc/electron-updater",
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "electron": "20.0.2"
+  }
+}

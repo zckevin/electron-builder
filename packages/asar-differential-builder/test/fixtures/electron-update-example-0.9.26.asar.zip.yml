@@ -1,0 +1,8 @@
+version: 0.9.26
+releaseDate: '2022-08-18T09:15:30.838Z'
+files:
+  - url: electron-update-example-0.9.26.asar.zip
+    sha512: T1mXJH2sbJW5oLGAKeY84fReq0OXgloUHTYiwCcFledwImIFTU10ZbdQVL669M/PVP8Tax0ieZt3yQxKnH8Wrw==
+    size: 9072603
+path: electron-update-example-0.9.26.asar.zip
+sha512: T1mXJH2sbJW5oLGAKeY84fReq0OXgloUHTYiwCcFledwImIFTU10ZbdQVL669M/PVP8Tax0ieZt3yQxKnH8Wrw==

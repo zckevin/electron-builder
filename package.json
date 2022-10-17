@@ -12,12 +12,14 @@
     "postinstall": "node ./basetag.js",
     "postpublish": "pnpm publish ./dependencies --no-git-checks --access public",
     "build": "ttsc --build",
-    "build:force": "ttsc --build --force"
+    "build:force": "ttsc --build --force",
+    "build:electron-updater": "cd packages/electron-updater && pnpm run build:force"
   },
   "dependencies": {
+    "@zckevin/jpeg-file": "file:.yalc/@zckevin/jpeg-file",
     "basetag": "^2.0.1",
-    "shelljs": "^0.8.5",
-    "fs-extra": "10.0.0"
+    "fs-extra": "10.0.0",
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "7.15.4",
@@ -30,7 +32,8 @@
     "tsc-watch": "^5.0.3",
     "ttypescript": "^1.5.13",
     "typescript": "4.3.5",
-    "typescript-transform-aliases": "^0.2.1"
+    "typescript-transform-aliases": "^0.2.1",
+    "yalc": "1.0.0-pre.53"
   },
   "engines": {
     "node": ">=14.14",

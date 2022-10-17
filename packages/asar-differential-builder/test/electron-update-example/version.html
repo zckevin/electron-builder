@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Electron Updater Example</title>
+  <style>
+    div {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    Current version: <span id="version">vX.Y.Z</span>
+  </div>
+  <div>
+    <button onclick="onGolangVersionBtnClick()">Get version from Golang binary</button>
+  </div>
+  <div>
+    <button onclick="onNodejsVersionBtnClick()">Get version from Nodejs library</button>
+  </div>
+  <div>
+    <button onclick="checkForUpdates()">Check for Updates</button>
+    <select id="updateTargets"></select>
+  </div>
+  <div>
+    <button onclick="downloadUpdate()">update/downgrade</button>
+  </div>
+  <div>
+    <button onclick="ipcRenderer.invoke('relaunch')">Relaunch</button>
+  </div>
+  <div id="messages"></div>
+  <script>
+    // Display the current version
+    const { version, e2e } = Object.fromEntries(new URL(window.location.href).searchParams);
+    document.getElementById('version').innerText = version;
+    setBodyBackgroundColorFromVersion(version);
+
+    // Listen for messages
+    const { ipcRenderer, ipcMain } = require('electron');
+
+    const asarUpdaterConfig = {
+      includesBinaryDir: true,
+      allowDowngrade: true,
+      autoDownload: false, // we'll download the update manually
+    }
+    const testingOptions = {
+      throwOnFallback: false,
+      ignoreRealZipBackup: false,
+      removePendingZip: true,
+      ignoreRealInstall: false,
+    }
+
+    // on e2e testing, we don't want to check for updates automatically,
+    // and we may also want to pass in different options for updater
+    if (!e2e) {
+      ipcRenderer.invoke("createAsarUpdater", testingOptions, asarUpdaterConfig);
+      setTimeout(() => {
+        checkForUpdates();
+      }, 100);
+    }
+
+    ipcRenderer.on('message', function (event, text) {
+      var container = document.getElementById('messages');
+      var message = document.createElement('div');
+      message.innerHTML = text;
+      container.appendChild(message);
+    })
+
+    async function onGolangVersionBtnClick() {
+      console.log(await ipcRenderer.invoke("getVersionGolang"));
+    }
+
+    async function onNodejsVersionBtnClick() {
+      console.log(await ipcRenderer.invoke("getVersionJavascript"));
+    }
+
+    async function checkForUpdates() {
+      await ipcRenderer.invoke("createAsarUpdater", testingOptions, asarUpdaterConfig);
+      const updateInfo = await ipcRenderer.invoke("checkForUpdates");
+      console.log(JSON.stringify(updateInfo, null, 2));
+      const targetUrls = updateInfo.files.map(it => it.url)
+      const select = document.getElementById('updateTargets')
+      select.innerHTML = ''
+      targetUrls
+        .forEach(it => {
+          const option = document.createElement('option')
+          option.value = it
+          option.innerText = it
+          option.disabled = it.includes(version)
+          select.appendChild(option)
+        })
+    }
+
+    async function downloadUpdate() {
+      const url = document.getElementById('updateTargets').value
+      if (!url) {
+        return
+      }
+      await ipcRenderer.invoke("downloadUpdate", url)
+      if (confirm("Update downloaded, restart the app") == true) {
+        ipcRenderer.invoke("relaunch");
+      }
+    }
+
+    function setBodyBackgroundColorFromVersion(version) {
+      function hash(string, digits = 6) {
+        var m = Math.pow(10, digits + 1) - 1;
+        var phi = Math.pow(10, digits) / 2 - 1;
+        var n = 0;
+        for (var i = 0; i < string.length; i++) {
+          n = (n + phi * string.charCodeAt(i)) % m;
+        }
+        return n.toString();
+      }
+      const h = parseInt(hash(version)) % 360;
+      document.body.style.backgroundColor = `hsl(${h}, 68%, 57%)`;
+    }
+  </script>
+</body>
+
+</html>

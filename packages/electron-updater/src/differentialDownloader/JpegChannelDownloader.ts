@@ -3,8 +3,8 @@ import { copyData, } from "./DataSplitter"
 import { DifferentialDownloader } from "./DifferentialDownloader"
 import { Operation, OperationKind } from "./downloadPlanBuilder"
 import * as rx from "rxjs";
-
-const { DownloadFile } = require("@zckevin/jpeg-file");
+// @ts-ignore
+import { DownloadFile } from "@zckevin/jpeg-file";
 
 export async function downloadUsingJpegChannel(
   descStr: string,
@@ -48,7 +48,7 @@ export async function downloadUsingJpegChannel(
 
     try {
       await rx.firstValueFrom(subject);
-    } catch(err) {
+    } catch (err) {
       reject(err as Error);
       return;
     }

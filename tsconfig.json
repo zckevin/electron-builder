@@ -11,6 +11,9 @@
       "path": "./packages/electron-updater"
     },
     {
+      "path": "./packages/asar-differential-builder"
+    },
+    {
       "path": "./packages/electron-builder-squirrel-windows"
     },
     {
