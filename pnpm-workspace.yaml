@@ -1,3 +1,4 @@
 packages:
   - "packages/**"
   - "test"
+  - "!packages/asar-differential-builder/test/electron-update-example"
