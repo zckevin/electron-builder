@@ -4,7 +4,7 @@ import * as _ from "lodash"
 const path = require('path')
 const AdmZip = require("adm-zip");
 
-import { DIST_DIR, DEFAULT_BINARY_TARGETS } from "../global"
+import { DIST_DIR, getBinaryTarget } from "../global"
 import { generateElectronProject } from "../electron-project-generator"
 import { buildElectronAsar } from "../electron-project-builder"
 import { createBuildTargetDir, readFilesInDir, UnitTestConfig, getDifferencialBuilderConfig, randomDirName } from "./helper";
@@ -37,9 +37,10 @@ function checkTargetZipFile(files: Array<string>, targetDir: string, config: Uni
 }
 
 function checkTargetFiles(version: string, targetDir: string, config: UnitTestConfig) {
+  const binaryTargets = [getBinaryTarget()];
   // zip/yaml/blockmap
   const zipFileNames = config.includesBinaryDir ?
-    DEFAULT_BINARY_TARGETS.map((target: any) => `electron-update-example-${version}-${target.os}-${target.arch}`) :
+    binaryTargets.map((target: any) => `electron-update-example-${version}-${target.os}-${target.arch}`) :
     [`electron-update-example-${version}`];
   const extensions = [".asar.zip", ".asar.zip.yml", ".asar.zip.blockmap"];
   const zipFiles = _.union(...zipFileNames.map(
@@ -47,7 +48,7 @@ function checkTargetFiles(version: string, targetDir: string, config: UnitTestCo
   ));
   // index yaml
   const ymlFiles = config.includesBinaryDir ?
-    DEFAULT_BINARY_TARGETS.map((target: any) => `asar-${target.os}-${target.arch}.yml`) :
+    binaryTargets.map((target: any) => `asar-${target.os}-${target.arch}.yml`) :
     [`asar.yml`];
   const targetFilesShouldExist = _.union(zipFiles, ymlFiles);
   const files = readFilesInDir(targetDir);

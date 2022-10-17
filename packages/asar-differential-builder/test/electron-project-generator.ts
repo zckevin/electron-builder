@@ -1,5 +1,4 @@
-import { TEST_ROOT_DIR } from "./global";
-import { DEFAULT_BINARY_TARGETS, BinaryTarget } from "./global";
+import { TEST_ROOT_DIR, getBinaryTarget } from "./global";
 
 const shell = require('shelljs');
 const fs = require('fs');
@@ -12,21 +11,19 @@ class GoBuilder {
   goFileName = "http-server"
   goFilePath = path.join(DEMO_PROJECT_ROOT, `${this.goFileName}.go`)
 
-  build(version: string, destDir: string, targets: BinaryTarget[] = DEFAULT_BINARY_TARGETS) {
-    for (const target of targets) {
-      const { os, arch } = target;
-      const goBinaryName = `${this.goFileName}-${os}-${arch}${os === "windows" ? ".exe" : ""}`;
-      const destPath = path.join(destDir, "binary", goBinaryName)
-      const cmd = `env GOOS=${os} GOARCH=${arch} ` +
-        `go build -ldflags "-s -w -X main.version=${version}" ` +
-        `-o ${destPath} ${this.goFilePath}`
-      console.log(`GoBuilder: ${cmd}`)
-      const ret = shell.exec(cmd)
-      if (ret.code !== 0) {
-        console.log(ret.stdout)
-        console.log(ret.stderr)
-        throw new Error("GoBuilder: exec error")
-      }
+  build(version: string, destDir: string) {
+    const { os, arch } = getBinaryTarget();
+    const goBinaryName = `${this.goFileName}-${os}-${arch}${os === "windows" ? ".exe" : ""}`;
+    const destPath = path.join(destDir, "binary", goBinaryName)
+    const cmd = `env GOOS=${os} GOARCH=${arch} ` +
+      `go build -ldflags "-s -w -X main.version=${version}" ` +
+      `-o ${destPath} ${this.goFilePath}`
+    console.log(`GoBuilder: ${cmd}`)
+    const ret = shell.exec(cmd)
+    if (ret.code !== 0) {
+      console.log(ret.stdout)
+      console.log(ret.stderr)
+      throw new Error("GoBuilder: exec error")
     }
   }
 }
