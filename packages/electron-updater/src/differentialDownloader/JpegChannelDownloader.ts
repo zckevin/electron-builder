@@ -15,7 +15,7 @@ export async function downloadUsingJpegChannel(
   reject: (error: Error) => void
 ) {
   const readRequests = tasks.filter(it => it.kind === OperationKind.DOWNLOAD);
-  const df = await DownloadFile.Create(descStr, 10);
+  const df = await DownloadFile.Create(decodeURIComponent(descStr), 10);
   const blockingQueue = df.ReadvBlockingQueue(readRequests);
 
   for (let i = 0; i < tasks.length; i++) {

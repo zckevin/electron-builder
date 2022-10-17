@@ -20,7 +20,7 @@ export async function genYml(appinfo: AppInfo, config: BuilderConfig, binaryTarg
   const fileName = path.basename(zipPath);
   const newFileInfo = {
     "name": fileName,
-    "url": fileName + "?desc=" + descStr,
+    "url": fileName + "?desc=" + encodeURIComponent(descStr),
     "sha512": blockmapInfo.sha512,
     "size": blockmapInfo.size,
   }

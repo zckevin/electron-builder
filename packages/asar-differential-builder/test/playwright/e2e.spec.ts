@@ -4,7 +4,6 @@ import { ipcMainInvokeHandler } from 'electron-playwright-helpers'
 import * as http from 'http'
 const fsExtra = require('fs-extra')
 const path = require('path')
-// const { isCi } = require("env-ci")();
 const isCi = false;
 
 import { DIST_DIR, getAppInfo } from "../global"
