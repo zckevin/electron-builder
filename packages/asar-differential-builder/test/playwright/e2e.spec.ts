@@ -4,7 +4,8 @@ import { ipcMainInvokeHandler } from 'electron-playwright-helpers'
 import * as http from 'http'
 const fsExtra = require('fs-extra')
 const path = require('path')
-const { isCi } = require("env-ci")();
+// const { isCi } = require("env-ci")();
+const isCi = false;
 
 import { DIST_DIR, getAppInfo } from "../global"
 import { spawnExecutable } from "./helper"
@@ -135,6 +136,7 @@ async function testUpdate(versions: string[], options: TestOptions) {
   }
 }
 
+/*
 test('Electron-update-example should be upgraded by falling back to full download update', async () => {
   await testUpdate(TEST_VERSIONS, {
     differencialUpdate: false, // ***
@@ -171,6 +173,7 @@ test('Electron-update-example could be downgraded', async () => {
     useJpegChannel: false,
   })
 })
+*/
 
 test('Electron-update-example could be upgraded with jpeg channel', async () => {
   await testUpdate(TEST_VERSIONS, {

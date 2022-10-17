@@ -4,9 +4,6 @@
     "ci-generate-electron-projects": "ts-node --esm ./playwright/ci-generate-projects.ts",
     "test:unit": "jest ./units",
     "test:e2e": "playwright test",
-    "test:e2e:gnu": "DEBUG=pw:browser npm run test:e2e",
-    "test:e2e:windows": "set DEBUG=pw:browser && npm run test:e2e",
-    "test": "npm run test:unit && npm run test:e2e",
-    "test:xvfb": "xvfb-run npm run test"
+    "test:e2e:xvfb": "xvfb-run npm run test:e2e"
   }
 }

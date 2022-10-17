@@ -14,7 +14,7 @@ app.on('will-quit', () => {
 const publishOptions = {
   provider: "generic",
   channel: "asar",
-  url: "http://192.168.123.19:10087/",
+  url: "http://127.0.0.1:10087/",
 }
 
 let updater;
